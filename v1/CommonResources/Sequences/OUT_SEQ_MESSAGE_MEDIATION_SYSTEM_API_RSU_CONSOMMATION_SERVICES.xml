@@ -1,0 +1,355 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sequence name="OUT_SEQ_MESSAGE_MEDIATION_SYSTEM_API_RSU_CONSOMMATION_SERVICES" trace="disable" xmlns="http://ws.apache.org/ns/synapse">
+    <log level="full"/>
+    <property expression="$axis2:HTTP_SC" name="propHTTP_SC_BACKEND" scope="default" type="STRING"/>
+    <property name="propAPIValidated" scope="default" type="STRING" value="true"/>
+    <property name="propBackendValidated" scope="default" type="STRING" value="true"/>
+    <property name="propAPIAuthorized" scope="default" type="STRING" value="true"/>
+    <property name="propBackendAuthorized" scope="default" type="STRING" value="true"/>
+    <property expression="get-property(&quot;SYSTEM_TIME&quot;)" name="propX-Response-Backend-Timestamp" scope="default" type="STRING"/>
+    <property name="propBackend-ID" scope="default" type="STRING" value="RSU"/>
+    <!-- Metrics -->
+    <property expression="$trp:Content-Length" name="propX-Response-Length" scope="default" type="STRING"/>
+    <filter regex="^null$|^$" source="$ctx:propX-Response-Length">
+        <then>
+            <script language="js"><![CDATA[var msgLength =
+				mc.getEnvelopeXML().toString().length;
+				mc.setProperty("MSG_LENGTH", java.lang.Integer(msgLength));]]></script>
+            <property expression="$ctx:MSG_LENGTH" name="propX-Response-Length" scope="default" type="STRING"/>
+        </then>
+        <else/>
+    </filter>
+    <!-- /Metrics -->
+    <filter regex="^200$" source="$axis2:HTTP_SC">
+        <then>
+            <property name="propMsgResponse" scope="default" type="STRING" value="OK"/>
+            <property expression="json-eval($.CodeRetour)" name="codeRetour" scope="default" type="STRING"/>
+            <switch source="get-property('default','URL_BACKEND')">
+                <case regex=".*\/consommation\?.*">
+                    <log>
+                        <property expression="json-eval($.consommation)" name="conso1"/>
+                    </log>
+                    <payloadFactory media-type="json">
+                        <format>
+							{
+							"consommation": [{
+							"codeRetour": "$1",
+							"cnie": "$2",
+							"nomPrenom":"$3",
+							"prefecture": "$4",
+							"commune": "$5",
+							"quartier":"$6",
+							"sousQuartier": "$7",
+							"immeuble": "$8",
+							"complementAdresse": "$9",
+							"listeConsommations": $10,
+							"listeConsommationAutresResidences":$11
+							}]
+							}
+						</format>
+                        <args>
+                            <arg evaluator="json" expression="$.consommation.codeRetour"/>
+                            <arg evaluator="json" expression="$.consommation.cnie"/>
+                            <arg evaluator="json" expression="$.consommation.nomPrenom"/>
+                            <arg evaluator="json" expression="$.consommation.prefecture"/>
+                            <arg evaluator="json" expression="$.consommation.commune"/>
+                            <arg evaluator="json" expression="$.consommation.quartier"/>
+                            <arg evaluator="json" expression="$.consommation.sousquartier"/>
+                            <arg evaluator="json" expression="$.consommation.immeuble"/>
+                            <arg evaluator="json" expression="$.consommation.complementAdresse"/>
+                            <arg evaluator="json" expression="$.consommation.listeConsommations"/>
+                            <arg evaluator="json" expression="$.consommation.listeConsommationAutresResidences"/>
+                        </args>
+                    </payloadFactory>
+                    <filter regex="^null$" source="json-eval($.consommation.listeConsommations)">
+                        <then/>
+                        <else>
+                            <foreach expression="//listeConsommations">
+                                <sequence>
+                                    <payloadFactory media-type="xml">
+                                        <format>
+                                            <listeConsommations>
+                                                <mois>$1</mois>
+                                                <annee>$2</annee>
+                                                <montantEau>$3</montantEau>
+                                                <montantElectricite>$4</montantElectricite>
+                                            </listeConsommations>
+                                        </format>
+                                        <args>
+                                            <arg evaluator="json" expression="$.consommation.listeConsommations.Mois"/>
+                                            <arg evaluator="json" expression="$.consommation.listeConsommations.Annee"/>
+                                            <arg evaluator="json" expression="$.consommation.listeConsommations.MontantEau"/>
+                                            <arg evaluator="json" expression="$.consommation.listeConsommations.MontantElectricite"/>
+                                        </args>
+                                    </payloadFactory>
+                                </sequence>
+                            </foreach>
+                        </else>
+                    </filter>
+                    <!-- store the listConsommations array object in the global listConsommations 
+						object -->
+                    <payloadFactory media-type="json">
+                        <format>
+							$1
+						</format>
+                        <args>
+                            <arg evaluator="xml" expression="$body/*[1]"/>
+                        </args>
+                    </payloadFactory>
+                    <filter regex="^null$" source="json-eval($.consommation.listeConsommationAutresResidences)">
+                        <then/>
+                        <else>
+                            <foreach expression="//listeConsommationAutresResidences">
+                                <sequence>
+                                    <payloadFactory media-type="xml">
+                                        <format>
+                                            <listeConsommationAutresResidences>
+                                                <cil>$1</cil>
+                                                <adresse>$2</adresse>
+                                                <commune>$3</commune>
+                                                <mois>$4</mois>
+                                                <annee>$5</annee>
+                                                <montantEau>$6</montantEau>
+                                                <montantElectricite>$7</montantElectricite>
+                                            </listeConsommationAutresResidences>
+                                        </format>
+                                        <args>
+                                            <arg evaluator="json" expression="$.consommation.listeConsommationAutresResidences.CIL"/>
+                                            <arg evaluator="json" expression="$.consommation.listeConsommationAutresResidences.Adresse"/>
+                                            <arg evaluator="json" expression="$.consommation.listeConsommationAutresResidences.Commune"/>
+                                            <arg evaluator="json" expression="$.consommation.listeConsommationAutresResidences.Mois"/>
+                                            <arg evaluator="json" expression="$.consommation.listeConsommationAutresResidences.Annee"/>
+                                            <arg evaluator="json" expression="$.consommation.listeConsommationAutresResidences.MontantEau"/>
+                                            <arg evaluator="json" expression="$.consommation.listeConsommationAutresResidences.MontantElectricite"/>
+                                        </args>
+                                    </payloadFactory>
+                                </sequence>
+                            </foreach>
+                        </else>
+                    </filter>
+                    <payloadFactory media-type="json">
+                        <format>
+							$1
+						</format>
+                        <args>
+                            <arg evaluator="xml" expression="$body/*[1]"/>
+                        </args>
+                    </payloadFactory>
+                    <!-- convert xml data to json -->
+                    <xslt key="conf:resources/v1/xslt/XSLT_RSU_CONSOMMATION_SERVICES.xslt"/>
+                    <property name="messageType" scope="axis2" type="STRING" value="application/xml"/>
+                    <payloadFactory media-type="json">
+                        <format>
+							$1
+						</format>
+                        <args>
+                            <arg evaluator="xml" expression="$body/*[1]"/>
+                        </args>
+                        <!-- get body element -->
+                    </payloadFactory>
+                    <payloadFactory media-type="json">
+                        <format>
+							$1
+						</format>
+                        <args>
+                            <arg evaluator="json" expression="$.jsonObject"/>
+                        </args>
+                    </payloadFactory>
+                </case>
+                <default/>
+            </switch>
+        </then>
+        <else>
+            <property expression="json-eval($.CodeRetour)" name="codeRetour" scope="default" type="STRING"/>
+            <payloadFactory media-type="json">
+                <format>
+					{
+					"codeRetour": "$1"
+					}
+				</format>
+                <args>
+                    <arg evaluator="json" expression="$.CodeRetour"/>
+                </args>
+            </payloadFactory>
+            <payloadFactory media-type="json">
+                <format>
+					$1
+				</format>
+                <args>
+                    <arg evaluator="xml" expression="$body/*[1]"/>
+                </args>
+            </payloadFactory>
+            <xslt key="conf:resources/v1/xslt/XSLT_RSU_CONSOMMATION_SERVICES.xslt"/>
+            <!-- convertisseur xml to json -->
+            <property name="messageType" scope="axis2" type="STRING" value="application/xml"/>
+            <payloadFactory media-type="json">
+                <format>
+					$1
+				</format>
+                <args>
+                    <arg evaluator="xml" expression="$body/*[1]"/>
+                </args>
+            </payloadFactory>
+            <payloadFactory media-type="json">
+                <format>
+					$1
+				</format>
+                <args>
+                    <arg evaluator="json" expression="$.jsonObject"/>
+                </args>
+            </payloadFactory>
+        </else>
+    </filter>
+    <switch source="json-eval($.CodeRetour)">
+        <case regex="^200$|^600$">
+            <property name="HTTP_SC" scope="axis2" type="STRING" value="103"/>
+            <property name="propBackendValidated" scope="default" type="STRING" value="false"/>
+            <property name="propBackendAuthorized" scope="default" type="STRING" value="false"/>
+            <payloadFactory media-type="json">
+                <format>
+					{
+					"codeRetour": "$1"
+					}
+				</format>
+                <args>
+                    <arg evaluator="json" expression="$.CodeRetour"/>
+                </args>
+            </payloadFactory>
+            <payloadFactory media-type="json">
+                <format>
+					$1
+				</format>
+                <args>
+                    <arg evaluator="xml" expression="$body/*[1]"/>
+                </args>
+            </payloadFactory>
+            <xslt key="conf:resources/v1/xslt/XSLT_RSU_CONSOMMATION_SERVICES.xslt"/>
+            <property name="messageType" scope="axis2" type="STRING" value="application/xml"/>
+            <payloadFactory media-type="json">
+                <format>
+					$1
+				</format>
+                <args>
+                    <arg evaluator="xml" expression="$body/*[1]"/>
+                </args>
+            </payloadFactory>
+            <payloadFactory media-type="json">
+                <format>
+					$1
+				</format>
+                <args>
+                    <arg evaluator="json" expression="$.jsonObject"/>
+                </args>
+            </payloadFactory>
+        </case>
+        <case regex="^400$|^500$|^100$">
+            <property name="HTTP_SC" scope="axis2" type="STRING" value="400"/>
+            <payloadFactory media-type="json">
+                <format>
+					{
+					"codeRetour": "$1"
+					}
+				</format>
+                <args>
+                    <arg evaluator="json" expression="$.CodeRetour"/>
+                </args>
+            </payloadFactory>
+            <payloadFactory media-type="json">
+                <format>
+					$1
+				</format>
+                <args>
+                    <arg evaluator="xml" expression="$body/*[1]"/>
+                </args>
+            </payloadFactory>
+            <xslt key="conf:resources/v1/xslt/XSLT_RSU_CONSOMMATION_SERVICES.xslt"/>
+            <property name="messageType" scope="axis2" type="STRING" value="application/xml"/>
+            <payloadFactory media-type="json">
+                <format>
+					$1
+				</format>
+                <args>
+                    <arg evaluator="xml" expression="$body/*[1]"/>
+                </args>
+            </payloadFactory>
+            <payloadFactory media-type="json">
+                <format>
+					$1
+				</format>
+                <args>
+                    <arg evaluator="json" expression="$.jsonObject"/>
+                </args>
+            </payloadFactory>
+        </case>
+        <case regex="^300$">
+            <property name="HTTP_SC" scope="axis2" type="STRING" value="500"/>
+            <payloadFactory media-type="json">
+                <format>
+					{
+					"codeRetour": "$1"
+					}
+				</format>
+                <args>
+                    <arg evaluator="json" expression="$.CodeRetour"/>
+                </args>
+            </payloadFactory>
+            <payloadFactory media-type="json">
+                <format>
+					$1
+				</format>
+                <args>
+                    <arg evaluator="xml" expression="$body/*[1]"/>
+                </args>
+            </payloadFactory>
+            <xslt key="conf:resources/v1/xslt/XSLT_RSU_CONSOMMATION_SERVICES.xslt"/>
+            <property name="messageType" scope="axis2" type="STRING" value="application/xml"/>
+            <payloadFactory media-type="json">
+                <format>
+					$1
+				</format>
+                <args>
+                    <arg evaluator="xml" expression="$body/*[1]"/>
+                </args>
+            </payloadFactory>
+            <payloadFactory media-type="json">
+                <format>
+					$1
+				</format>
+                <args>
+                    <arg evaluator="json" expression="$.jsonObject"/>
+                </args>
+            </payloadFactory>
+        </case>
+        <default/>
+    </switch>
+    <!-- Logs -->
+    <property expression="$ctx:propX-Request-ID" name="log-id_instance" scope="default" type="STRING"/>
+    <property name="log-process_name" scope="default" type="STRING" value="OUT_SEQ_MESSAGE_MEDIATION_SYSTEM_API_RSU_CONSOMMATION_SERVICES"/>
+    <property expression="get-property(&quot;SYSTEM_DATE&quot;, &quot;yyyy-MM-dd'T'HH:mm:ss.SSSXXX&quot;)" name="log-ts" scope="default" type="STRING"/>
+    <property expression="$axis2:HTTP_SC" name="log-status" scope="default" type="STRING"/>
+    <property name="log-id_api" scope="default" type="STRING" value="SYSTEM-API-RSU-CONSOMMATION-SERVICES"/>
+    <property name="log-id_operation" scope="default" type="STRING" value="LOG-OUT-SEQ"/>
+    <property name="log-id_service" scope="default" type="STRING" value="OUT-SEQ"/>
+    <property name="log-activity" scope="default" type="STRING" value="SYSTEM API OUTPUT MEDIATION SEQUENCE"/>
+    <property expression="fn:concat('Content-Length: ',$trp:Content-Length,', Content-Type: ',$trp:Content-Type,', Server: ',$trp:Server,', Date: ',$trp:Date,', User-Agent: ',$trp:User-Agent)" name="log-headers" scope="default" type="STRING"/>
+    <property expression="fn:concat('RESPONSE RECEIVED: ',$ctx:propMsgResponse)" name="log-msg" scope="default" type="STRING"/>
+    <!-- <sequence key="conf:resources/v1/mediation/in/IN_SEQ_MESSAGE_MEDIATION_ONESITE_LOGS.xml"/> -->
+    <!-- /Logs -->
+    <!-- Metrics -->
+    <property expression="$axis2:HTTP_SC" name="propHTTP_SC_API" scope="default" type="STRING"/>
+    <property expression="get-property(&quot;SYSTEM_TIME&quot;)" name="propX-Response-Timestamp" scope="default" type="STRING"/>
+    <script language="js"><![CDATA[var msgLength =
+				mc.getEnvelopeXML().toString().length;
+				mc.setProperty("MSG_LENGTH", java.lang.Integer(msgLength));]]></script>
+    <property expression="$ctx:MSG_LENGTH" name="propX-API-Response-Length" scope="default" type="STRING"/>
+    <property expression="$trp:Content-Length" name="propX-Response-Length" scope="default" type="STRING"/>
+    <property expression="$trp:Content-Type" name="Content-Type-Out-Backend" scope="default" type="STRING"/>
+    <property expression="$trp:Server" name="Server-Out-Backend" scope="default" type="STRING"/>
+    <property expression="$trp:Date" name="Date-Out-Backend" scope="default" type="STRING"/>
+    <property expression="$trp:User-Agent" name="User-Agent-Out-Backend" scope="default" type="STRING"/>
+    <property name="Content-Type-Out-API" scope="default" type="STRING" value="application/xml; charset=UTF-8"/>
+    <property expression="get-property(&quot;SYSTEM_DATE&quot;, &quot;E, d MMM yyyy HH:mm:ss Z&quot;)" name="Date-Out-API" scope="default" type="STRING"/>
+    <!-- <sequence key="conf:resources/v1/mediation/in/IN_SEQ_MESSAGE_MEDIATION_ONESITE_METRICS.xml"/> -->
+    <!-- /Metrics -->
+    <respond/>
+</sequence>

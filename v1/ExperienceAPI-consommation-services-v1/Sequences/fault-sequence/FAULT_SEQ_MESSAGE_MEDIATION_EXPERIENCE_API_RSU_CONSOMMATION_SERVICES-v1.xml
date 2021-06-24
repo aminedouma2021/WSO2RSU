@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sequence name="FAULT_SEQ_MESSAGE_MEDIATION_EXPERIENCE_API_RSU_CONSOMMATION_SERVICES-v1" trace="disable" xmlns="http://ws.apache.org/ns/synapse">
+    <log level="custom">
+        <property name="STATUS" value="Executing custom 'fault' sequence"/>
+        <property expression="get-property('ERROR_CODE')" name="ERROR_CODE"/>
+        <property expression="get-property('ERROR_MESSAGE')" name="ERROR_MESSAGE"/>
+        <property expression="get-property('ERROR_DETAIL')" name="ERROR_DETAIL"/>
+        <property expression="get-property('ERROR_EXCEPTION')" name="ERROR_EXCEPTION"/>
+        <property expression="get-property('ENDPOINT_PREFIX')" name="Endpoint"/>
+        <property expression="get-property('transport', 'Content-Type')" name="Content-Type"/>
+        <property expression="get-property('msgID')" name="Correlation_Id"/>
+    </log>
+    <payloadFactory media-type="xml">
+        <format>
+            <am:fault xmlns:am="http://wso2.org/apimanager">
+                <am:code>$1</am:code>
+                <am:type>Status report</am:type>
+                <am:message>Runtime Error</am:message>
+                <am:description>$2</am:description>
+            </am:fault>
+        </format>
+        <args>
+            <arg evaluator="xml" expression="$ctx:ERROR_CODE"/>
+            <arg evaluator="xml" expression="$ctx:ERROR_MESSAGE"/>
+        </args>
+    </payloadFactory>
+    <filter regex="^401$" source="$axis2:HTTP_SC">
+        <then>
+            <property name="propAPIValidated" scope="default" type="STRING" value="true"/>
+            <property name="propAPIAuthorized" scope="default" type="STRING" value="false"/>
+        </then>
+        <else>
+            <property name="propAPIValidated" scope="default" type="STRING" value="true"/>
+            <property name="propAPIAuthorized" scope="default" type="STRING" value="true"/>
+        </else>
+    </filter>
+    <filter xpath="$ctx:CUSTOM_HTTP_SC">
+        <then>
+            <property expression="$ctx:CUSTOM_HTTP_SC" name="HTTP_SC" scope="axis2" type="STRING"/>
+        </then>
+        <else>
+            <property name="HTTP_SC" scope="axis2" type="STRING" value="500"/>
+        </else>
+    </filter>
+    <payloadFactory media-type="json">
+        <format>
+			$1
+		</format>
+        <args>
+            <arg evaluator="xml" expression="$body/*[1]"/>
+        </args>
+    </payloadFactory>
+    <property name="messageType" scope="axis2" type="STRING" value="application/json"/>
+    <property expression="$axis2:HTTP_SC" name="HTTP_SC_Origin" scope="default" type="STRING"/>
+    <!--  Logs -->
+    <property expression="$ctx:propX-Request-ID" name="log-id_instance" scope="default" type="STRING"/>
+    <property name="log-process_name" scope="default" type="STRING" value="FAULT_SEQ_MESSAGE_MEDIATION_EXPERIENCE_API_RSU_CONSOMMATION_SERVICES"/>
+    <property expression="get-property(&quot;SYSTEM_DATE&quot;, &quot;yyyy-MM-dd'T'HH:mm:ss.SSSXXX&quot;)" name="log-ts" scope="default" type="STRING"/>
+    <property expression="$ctx:HTTP_SC_Origin" name="log-status" scope="default" type="STRING"/>
+    <property name="log-id_api" scope="default" type="STRING" value="EXPERIENCE-API-RSU-CONSOMMATION-SERVICES"/>
+    <property name="log-id_operation" scope="default" type="STRING" value="LOG-FAULT-SEQ"/>
+    <property name="log-id_service" scope="default" type="STRING" value="FAULT-SEQ"/>
+    <property name="log-activity" scope="default" type="STRING" value="EXPERIENCE API FAULT MEDIATION SEQUENCE"/>
+    <property expression="fn:concat('Content-Length: ',$trp:Content-Length,', Content-Type: ',$trp:Content-Type,', Server: ',$trp:Server,', Date: ',$trp:Date,', User-Agent: ',$trp:User-Agent)" name="log-headers" scope="default" type="STRING"/>
+    <property expression="fn:concat('RESPONSE RECEIVED: ',$ctx:ERROR_MESSAGE)" name="log-msg" scope="default" type="STRING"/>
+    <!--     <sequence key="conf:resources/v1/mediation/in/IN_SEQ_MESSAGE_MEDIATION_ONESITE_LOGS.xml"/> -->
+    <!--  /Logs -->
+    <!-- Metrics -->
+    <property expression="$ctx:ERROR_MESSAGE" name="propMsgResponse" scope="default" type="STRING"/>
+    <property expression="$ctx:HTTP_SC_Origin" name="propHTTP_SC_API" scope="default" type="STRING"/>
+    <property name="propBackend-ID" scope="default" type="STRING" value="RSU"/>
+    <property expression="get-property(&quot;SYSTEM_TIME&quot;)" name="propX-Response-Timestamp" scope="default" type="STRING"/>
+    <property expression="$trp:Content-Length" name="propX-Response-Length" scope="default" type="STRING"/>
+    <filter regex="false" source="boolean(get-property('propX-Response-Length'))">
+        <then>
+            <script language="js"><![CDATA[var msgLength =
+				mc.getEnvelopeXML().toString().length;
+				mc.setProperty("MSG_LENGTH", java.lang.Integer(msgLength));]]></script>
+            <property expression="$ctx:MSG_LENGTH" name="propX-Response-Length" scope="default" type="STRING"/>
+        </then>
+        <else/>
+    </filter>
+    <script language="js"><![CDATA[var msgLength =
+				mc.getEnvelopeXML().toString().length;
+				mc.setProperty("MSG_LENGTH", java.lang.Integer(msgLength));]]></script>
+    <property expression="$ctx:MSG_LENGTH" name="propX-API-Response-Length" scope="default" type="STRING"/>
+    <!--     <sequence key="conf:resources/v1/mediation/in/IN_SEQ_MESSAGE_MEDIATION_ONESITE_METRICS.xml"/> -->
+    <!-- /Metrics -->
+    <property expression="$ctx:HTTP_SC_Origin" name="HTTP_SC" scope="axis2" type="STRING"/>
+    <property action="remove" name="TRANSPORT_HEADERS" scope="axis2"/>
+    <class name="org.wso2.carbon.apimgt.gateway.handlers.analytics.APIMgtFaultHandler"/>
+    <property name="RESPONSE" scope="default" type="STRING" value="true"/>
+    <header action="remove" name="To" scope="default"/>
+    <property action="remove" name="NO_ENTITY_BODY" scope="axis2"/>
+    <property action="remove" name="ContentType" scope="axis2"/>
+    <property action="remove" name="Authorization" scope="transport"/>
+    <property action="remove" name="Host" scope="transport"/>
+    <property action="remove" name="Accept" scope="transport"/>
+    <property action="remove" name="X-JWT-Assertion" scope="transport"/>
+    <send/>
+</sequence>

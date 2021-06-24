@@ -1,0 +1,307 @@
+openapi: 3.0.2
+info:
+  title: ProcessAPI-consommation-services
+  description: Toute opération liée à la gestion des consommation exposés par REDAL
+  contact:
+    name: Indra % Minsait
+    url: http://www.minsait.com
+    email: XXXXXXXXXX@minsait.com
+  version: 1.0.0
+servers:
+ -
+  url: https://gatewayadd-dev.onesaitplatform.com/redal-process-consommation-services/v1
+  description: DEV
+ -
+  url: https://uat-host/redal-process-consommation-services/v1
+  description: UAT
+ -
+  url: https://pro-host/redal-process-consommation-services/v1
+  description: PRO
+security:
+ -
+  default: []
+tags:
+ -
+  name: rsu-consommation-process-requete
+paths:
+  /consommation/specific:
+    get:
+      tags:
+       - rsu-consommation-process-requete
+      summary: Il s'agit d'une fonction qui permet de filtrer la liste des consommations dont l’année est supérieur a 2020
+      description: Ce service permet de récupérer les données des consommations supérieur a 2020
+      operationId: get-consommation-specific
+      parameters:
+       -
+        $ref: '#/components/parameters/x-client-id'
+       -
+        $ref: '#/components/parameters/x-request-id'
+       -
+        $ref: '#/components/parameters/x-request-application-name'
+       -
+        $ref: '#/components/parameters/codeAller'
+       -
+        $ref: '#/components/parameters/cnie'
+       -
+        $ref: '#/components/parameters/idcs'
+       -
+        $ref: '#/components/parameters/cil'
+       -
+        $ref: '#/components/parameters/commune'
+       -
+        $ref: '#/components/parameters/dateDebut'
+       -
+        $ref: '#/components/parameters/dateFin'
+      responses:
+        "103":
+          description: Premiers indices
+        "200":
+          description: La demande envoyée par le client a été traitée correctement.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/consommation'
+        "204":
+          description: Pas de contenu
+        "400":
+          description: La syntaxe de la requête n'a pas été comprise par le serveur.
+        "401":
+          description: La demande nécessite une authentification de l'utilisateur.
+        "403":
+          description: Le serveur a refusé d'exécuter la demande.
+        "404":
+          description: Le document ou fichier demandé par le client est introuvable.
+        "405":
+          description: Méthode Non Autorisée
+        "408":
+          description: Timeout
+        "426":
+          description: Mise a niveau  requise
+        "440":
+          description: Délai de connexion
+        "500":
+          description: Erreur interne du serveur
+        "505":
+          description: 'La version http insupportable '
+        "511":
+          description: Authentification réseau requise
+        "529":
+          description: Le site est surchargé
+      security:
+       -
+        ApiKeyAuth: []
+       -
+        bearerAuth: []
+       -
+        oAuthWSO2: []
+       -
+        default: []
+      x-auth-type: Application & Application User
+      x-throttling-tier: Unlimited
+      x-wso2-application-security:
+        security-types:
+         - oauth2
+        optional: false
+components:
+  schemas:
+    consommation:
+      required:
+       - consommation
+      type: object
+      properties:
+        consommation:
+          minItems: 1
+          uniqueItems: true
+          type: array
+          items:
+            required:
+             - cnie
+             - codeRetour
+             - commune
+             - complementAdresse
+             - immeuble
+             - nomPrenom
+             - prefecture
+             - quartier
+             - sousQuartier
+            properties:
+              codeRetour:
+                minLength: 1
+                type: string
+              cnie:
+                minLength: 1
+                type: string
+              nomPrenom:
+                minLength: 1
+                type: string
+              prefecture:
+                type: number
+              commune:
+                type: number
+              quartier:
+                type: number
+              sousQuartier:
+                type: number
+              immeuble:
+                type: number
+              complementAdresse:
+                minLength: 1
+                type: string
+      x-examples:
+        example-1:
+          consommation:
+           -
+            codeRetour: "987845454"
+            cnie: "56"
+            nomPrenom: douma amine
+            prefecture: 45
+            commune: 12
+            quartier: 65
+            sousQuartier: 658
+            immeuble: 6
+            complementAdresse: oulfa casablanca
+  parameters:
+    x-client-id:
+      name: x-client-id
+      in: header
+      description: ID d'API de l'application source
+      required: true
+      style: simple
+      explode: false
+      schema:
+        type: string
+    x-request-id:
+      name: x-request-id
+      in: header
+      description: Description Nom de l'application source
+      required: true
+      style: simple
+      explode: false
+      schema:
+        type: string
+    x-request-application-name:
+      name: x-request-application-name
+      in: header
+      description: Description Nom de l'application source
+      required: true
+      style: simple
+      explode: false
+      schema:
+        type: string
+    codeAller:
+      name: codeAller
+      in: query
+      description: 'Identifiant unique de l’enregistrement  '
+      required: true
+      style: form
+      explode: true
+      schema:
+        type: number
+    cnie:
+      name: cnie
+      in: query
+      description: 'Numéro de la carte d’identité  '
+      required: true
+      style: form
+      explode: true
+      schema:
+        type: string
+    idcs:
+      name: idcs
+      in: query
+      description: 'Identifiant digital civil et social du citoyen '
+      required: true
+      style: form
+      explode: true
+      schema:
+        type: number
+    cil:
+      name: cil
+      in: query
+      description: Référence local de consommation
+      required: true
+      style: form
+      explode: true
+      schema:
+        type: number
+    commune:
+      name: commune
+      in: query
+      description: Commune de la résidence
+      required: true
+      style: form
+      explode: true
+      schema:
+        type: number
+    dateDebut:
+      name: dateDebut
+      in: query
+      description: Date de début
+      required: true
+      style: form
+      explode: true
+      schema: {}
+    dateFin:
+      name: dateFin
+      in: query
+      description: Date de fin
+      required: true
+      style: form
+      explode: true
+      schema: {}
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      name: client_id
+      in: header
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    oAuthWSO2:
+      type: oauth2
+      flows:
+        implicit:
+          authorizationUrl: https://api.example.com/oauth2/authorize
+          scopes: {}
+    default:
+      type: oauth2
+      flows:
+        implicit:
+          authorizationUrl: ""
+          scopes: {}
+x-wso2-auth-header: Authorization
+x-wso2-cors:
+  corsConfigurationEnabled: false
+  accessControlAllowOrigins:
+   - '*'
+  accessControlAllowCredentials: true 
+  accessControlAllowHeaders:
+   - authorization
+   - Access-Control-Allow-Origin
+   - Content-Type
+   - SOAPAction
+   - apikey
+   - testKey
+  accessControlAllowMethods:
+   - GET
+   - PUT
+   - POST
+   - DELETE
+   - PATCH
+   - OPTIONS
+x-wso2-production-endpoints:
+  urls:
+   - http://localhost:3000/redal-process-consommation-services/v1
+  type: http
+x-wso2-sandbox-endpoints:
+  urls:
+   - http://localhost:3000/redal-process-consommation-services/v1
+  type: http
+x-wso2-basePath: /redal-process-consommation-services/1.0.0
+x-wso2-transports:
+ - http
+ - https
+x-wso2-response-cache:
+  enabled: false
+  cacheTimeoutInSeconds: 300

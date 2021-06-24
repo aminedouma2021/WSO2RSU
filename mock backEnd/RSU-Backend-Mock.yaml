@@ -1,0 +1,192 @@
+openapi: 3.0.2
+info:
+  title: RSU-Backend-Mock
+  description: RSU Backend Mock
+  contact:
+    name: Indra % Minsait
+    url: 'http://www.minsait.com'
+    email: XXXXXXXXXX@minsait.com
+  version: 1.0.0
+servers:
+  - url: 'https://localhost:3000/redal/api'
+    description: DEV
+security: []
+tags:
+  - name: rsu-consommation-requete
+paths:
+  '/consommation':
+    get:
+      tags:
+        - rsu-consommation-requete
+      summary: Il s'agit d'une fonction qui permet de récupérer la liste des consommations ou bien les consommations dont l’année est supérieur a 2020
+      description: Ce service permet de récupérer la liste des consommations ou bien les consommations dont l’année est supérieur a 2020
+      operationId: get-consommation-donnees
+      parameters:
+        - $ref: '#/components/parameters/Header-ClientId'
+        - $ref: '#/components/parameters/Header-ClientSecret'
+        - $ref: '#/components/parameters/Query-CodeAller'
+        - $ref: '#/components/parameters/Query-IDCS'
+        - $ref: '#/components/parameters/Query-CNIE'
+        - $ref: '#/components/parameters/Query-DateDebut'
+        - $ref: '#/components/parameters/Query-dateFin'
+        - $ref: '#/components/parameters/Query-CIL'
+        - $ref: '#/components/parameters/Query-Commune'
+      responses:
+        '200':
+          description: La demande envoyée par le client a été traitée correctement.
+          content:
+            application/json:
+              examples: 
+                Response1:
+                  value:
+                   consommation:
+                    codeRetour: "200"
+                    cnie: "asap54"
+                    nomPrenom: "rodrigo escapa"
+                    prefecture: 0
+                    commune: 1
+                    quartier: 2
+                    sousQuartier: 3
+                    immeuble: 4
+                    complementAdresse: string
+                    listeConsommations:
+                      mois: 0
+                      annee: 0
+                      montantEau: 0
+                      montantElectricite: 0
+                    listeConsommationAutresResidences:
+                      cil: 0
+                      adresse: string
+                      commune: 0
+                      mois: 0
+                      annee: 0
+                      montantEau: 0
+                      montantElectricite: 0
+
+        '103':
+          description: Premiers indices.
+          content:
+            application/json:
+              examples: 
+                Response1:
+                  value:
+                    codeRetour: "200"  
+        '400':
+          description: La syntaxe de la requête n'a pas été comprise par le serveur.
+          content:
+            application/json:
+              examples: 
+                Response1:
+                  value:
+                    codeRetour: "400"  
+        '500':
+          description: Erreur interne du serveur.
+          content:
+            application/json:
+              examples: 
+                Response1:
+                  value:
+                    codeRetour: "300"  
+
+components:
+  schemas:
+    client_id:
+      type: string
+    client_secret:
+      type: string
+    CodeAller:
+      type: number
+    IDCS:
+      type: number
+    CNIE:
+      type: number
+    CIL:
+      type: number
+    Commune:
+      type: number
+    DateDebut:
+      type: string
+    dateFin:
+      type: string
+  parameters:
+    Header-ClientId:
+      name: client_id
+      in: header
+      description: ID d'API de l'application source
+      required: true
+      style: simple
+      explode: false
+      schema:
+        $ref: '#/components/schemas/client_id' 
+    Header-ClientSecret:
+      name: client_secret
+      in: header
+      description: ID d'API de l'application source
+      required: true
+      style: simple
+      explode: false
+      schema:
+        $ref: '#/components/schemas/client_secret'        
+    Query-CodeAller:
+      name: CodeAller
+      in: query
+      description: CodeAller
+      required: true
+      style: form
+      explode: false
+      schema:
+        $ref: '#/components/schemas/CodeAller'
+    Query-IDCS:
+      name: IDCS
+      in: query
+      description: IDCS
+      required: false
+      style: form
+      explode: false
+      schema:
+        $ref: '#/components/schemas/IDCS'
+    Query-CNIE:
+      name: CNIE
+      in: query
+      description: CNIE
+      required: false
+      style: form
+      explode: false
+      schema:
+        $ref: '#/components/schemas/CNIE'
+    Query-CIL:
+      name: CIL
+      in: query
+      description: CIL
+      required: false
+      style: form
+      explode: false
+      schema:
+        $ref: '#/components/schemas/CIL'
+    Query-Commune:
+      name: Commune
+      in: query
+      description: Commune
+      required: false
+      style: form
+      explode: false
+      schema:
+        $ref: '#/components/schemas/Commune'
+    Query-DateDebut:
+      name: DateDebut
+      in: query
+      description: DateDebut
+      required: false
+      style: form
+      explode: false
+      schema:
+        $ref: '#/components/schemas/DateDebut'  
+    Query-dateFin:
+      name: dateFin
+      in: query
+      description: dateFin
+      required: false
+      style: form
+      explode: false
+      schema:
+        $ref: '#/components/schemas/dateFin'      

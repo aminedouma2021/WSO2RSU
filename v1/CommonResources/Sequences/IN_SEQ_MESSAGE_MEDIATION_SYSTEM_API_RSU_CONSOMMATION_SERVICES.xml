@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sequence name="IN_SEQ_MESSAGE_MEDIATION_SYSTEM_API_RSU_CONSOMMATION_SERVICES" trace="disable" xmlns="http://ws.apache.org/ns/synapse">
+    <property expression="get-property('registry','conf:/resources/v1/properties/RSU_PROPERTIES_FILE.xml')" name="xmlFile" scope="default" type="OM"/>
+    <property expression="$ctx:xmlFile//ClientIdConsommationServices" name="regPropertyLogin" scope="default" type="STRING"/>
+    <property expression="$ctx:xmlFile//ClientSecretConsommationServices" name="regPropertyPassword" scope="default" type="STRING"/>
+    <log>
+        <property expression="$axis2:REST_URL_POSTFIX" name="The basePath of system API before"/>
+    </log>
+    <switch source="$axis2:REST_URL_POSTFIX">
+        <case regex=".*\/consommation\?.*">
+            <property expression="fn:concat('/consommation?CodeAller=',$url:codeAller,'&amp;IDCS=',$url:idcs,'&amp;CNIE=',$url:cnie,'&amp;CIL=',$url:cil,'&amp;Commune=',$url:commune,'&amp;DateDebut=',$url:dateDebut,'&amp;dateFin=',$url:dateFin)" name="REST_URL_POSTFIX" scope="axis2" type="STRING"/>
+        </case>
+        <default/>
+    </switch>
+    <log>
+        <property expression="$axis2:REST_URL_POSTFIX" name="The basePath of system API after"/>
+    </log>
+    <header action="remove" name="apikey" scope="transport"/>
+    <property expression="$axis2:REST_URL_POSTFIX" name="URL_BACKEND" scope="default" type="STRING"/>
+    <header expression="$ctx:regPropertyLogin" name="client_id" scope="transport"/>
+    <header expression="$ctx:regPropertyPassword" name="client_secret" scope="transport"/>
+    <!-- Metrics -->
+    <property expression="$trp:X-Client-ID" name="propX-Client-ID" scope="default" type="STRING"/>
+    <property expression="$trp:X-Request-ID" name="propX-Request-ID" scope="default" type="STRING"/>
+    <property expression="$trp:X-Request-Application-Name" name="propX-Request-Application-Name" scope="default" type="STRING"/>
+    <property expression="$trp:X-Requester-IP" name="propX-Requester-IP" scope="default" type="STRING"/>
+    <property expression="$trp:X-Request-Date-TS" name="propX-Request-Date" scope="default" type="STRING"/>
+    <property expression="$trp:X-Request-Timestamp" name="propX-Request-Timestamp" scope="default" type="STRING"/>
+    <property expression="$trp:X-Request-URL" name="propX-Request-URL" scope="default" type="STRING"/>
+    <property expression="$trp:X-Request-Method" name="propX-Request-Method" scope="default" type="STRING"/>
+    <property expression="$trp:X-Request-Method" name="propX-Backend-Method" scope="default" type="STRING"/>
+    <property expression="$ctx:URL_BACKEND" name="propURL_BACKEND" scope="default" type="STRING"/>
+    <property expression="get-property(&quot;SYSTEM_TIME&quot;)" name="propX-Request-Backend-Timestamp" scope="default" type="STRING"/>
+    <property expression="$trp:X-Request-Length" name="propX-Request-Length" scope="default" type="STRING"/>
+    <property expression="$trp:Content-Length" name="Content-Length-In-Backend" scope="default" type="STRING"/>
+    <property expression="$trp:Content-Type" name="Content-Type-In-Backend" scope="default" type="STRING"/>
+    <property expression="$trp:Server" name="Server-In-Backend" scope="default" type="STRING"/>
+    <property expression="$trp:Date" name="Date-In-Backend" scope="default" type="STRING"/>
+    <property expression="$trp:User-Agent" name="User-Agent-In-Backend" scope="default" type="STRING"/>
+    <property expression="$trp:X-Request-Content-Type" name="Content-Type-In-API" scope="default" type="STRING"/>
+    <property expression="$trp:X-Request-Server" name="Server-In-API" scope="default" type="STRING"/>
+    <property expression="$trp:X-Request-Date" name="Date-In-API" scope="default" type="STRING"/>
+    <property expression="$trp:X-Request-User-Agent" name="User-Agent-In-API" scope="default" type="STRING"/>
+    <property expression="$trp:X-Request-API-Name" name="propAPIName" scope="default" type="STRING"/>
+    <script language="js"><![CDATA[var msgLength =
+				mc.getEnvelopeXML().toString().length;
+				mc.setProperty("MSG_LENGTH", java.lang.Integer(msgLength));]]></script>
+    <property expression="$ctx:MSG_LENGTH" name="propRequest-Backend-Content-Length" scope="default" type="STRING"/>
+    <!-- /Metrics -->
+    <!--  Logs -->
+    <property expression="$ctx:propX-Request-ID" name="log-id_instance" scope="default" type="STRING"/>
+    <property name="log-process_name" scope="default" type="STRING" value="IN_SEQ_MESSAGE_MEDIATION_SYSTEM_API_RSU_CONSOMMATION_SERVICES"/>
+    <property expression="get-property(&quot;SYSTEM_DATE&quot;, &quot;yyyy-MM-dd'T'HH:mm:ss.SSSXXX&quot;)" name="log-ts" scope="default" type="STRING"/>
+    <property name="log-status" scope="default" type="STRING" value="200"/>
+    <property name="log-id_api" scope="default" type="STRING" value="SYSTEM-API-RSU-CONSOMMATION-SERVICES"/>
+    <property name="log-id_operation" scope="default" type="STRING" value="LOG-IN-SEQ"/>
+    <property name="log-id_service" scope="default" type="STRING" value="IN-SEQ"/>
+    <property name="log-activity" scope="default" type="STRING" value="SYSTEM API INPUT MEDIATION SEQUENCE"/>
+    <property expression="fn:concat('Content-Length: ',$ctx:Content-Length-In-Backend,', Content-Type: ',$ctx:Content-Type-In-Backend,', Server: ',$ctx:Server-In-Backend,', Date: ',$ctx:Date-In-Backend,', User-Agent: ',$ctx:User-Agent-In-Backend)" name="log-headers" scope="default" type="STRING"/>
+    <property name="log-msg" scope="default" type="STRING" value="REQUEST RECEIVED: OK"/>
+    <!--     <sequence key="conf:resources/v1/mediation/in/IN_SEQ_MESSAGE_MEDIATION_ONESITE_LOGS.xml"/> -->
+    <!--  /Logs -->
+</sequence>

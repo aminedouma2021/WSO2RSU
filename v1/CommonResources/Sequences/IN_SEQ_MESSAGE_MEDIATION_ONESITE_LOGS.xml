@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sequence name="IN_SEQ_MESSAGE_MEDIATION_ONESITE_LOGS" trace="disable" xmlns="http://ws.apache.org/ns/synapse">
+    <script language="js"><![CDATA[var payload = mc.getPayloadJSON();
+mc.setProperty("jsonPayload",JSON.stringify(payload));]]></script>
+    <property expression="$axis2:REST_URL_POSTFIX" name="originURL" scope="default" type="STRING"/>
+    <property action="remove" name="REST_URL_POSTFIX" scope="axis2"/>
+    <property expression="get-property('To')" name="originTo" scope="default" type="STRING"/>
+    <property expression="$axis2:HTTP_METHOD" name="originMethod" scope="default" type="STRING"/>
+    <payloadFactory media-type="json">
+        <format>
+[
+    {
+        "id_instance":"$1",
+        "process_name":"$2",
+        "ts":"$3",
+        "status":"$4",
+        "id_api":"$5",
+        "id_operation":"$6",
+        "id_service":"$7",
+        "activity":"$8",
+        "headers":"$9",
+        "msg":"$10"
+    }
+]
+        </format>
+        <args>
+            <arg evaluator="xml" expression="$ctx:log-id_instance"/>
+            <arg evaluator="xml" expression="$ctx:log-process_name"/>
+            <arg evaluator="xml" expression="$ctx:log-ts"/>
+            <arg evaluator="xml" expression="$ctx:log-status"/>
+            <arg evaluator="xml" expression="$ctx:log-id_api"/>
+            <arg evaluator="xml" expression="$ctx:log-id_operation"/>
+            <arg evaluator="xml" expression="$ctx:log-id_service"/>
+            <arg evaluator="xml" expression="$ctx:log-activity"/>
+            <arg evaluator="xml" expression="$ctx:log-headers"/>
+            <arg evaluator="xml" expression="$ctx:log-msg"/>
+        </args>
+    </payloadFactory>
+    <payloadFactory media-type="json">
+        <format>
+			$1
+        		</format>
+        <args>
+            <arg evaluator="xml" expression="$body/*[1]"/>
+        </args>
+    </payloadFactory>
+    <xslt key="conf:resources/v1/xslt/XSLT_ONESITE_SERVICES.xslt"/>
+    <property name="messageType" scope="axis2" type="STRING" value="application/xml"/>
+    <payloadFactory media-type="json">
+        <format>
+			$1
+        		</format>
+        <args>
+            <arg evaluator="xml" expression="$body/*[1]"/>
+        </args>
+    </payloadFactory>
+    <payloadFactory media-type="json">
+        <format>
+			[$1]
+        		</format>
+        <args>
+            <arg evaluator="json" expression="$.jsonObject"/>
+        </args>
+    </payloadFactory>
+    <header name="X-SDC-APPLICATION-ID" scope="transport" value="ZRHjFIeo8AZsNlY2wWBIrZmmpyMKjC"/>
+    <header name="X-OP-APIKey" scope="transport" value="da29bc6c1a2a402992efcdfc119da206"/>
+    <property name="HTTP_METHOD" scope="axis2" type="STRING" value="POST"/>
+    <log level="full"/>
+    <call blocking="true">
+        <endpoint key="conf:resources/v1/endpoints/ONESITE_LOGS.xml"/>
+    </call>
+    <log level="full"/>
+    <header action="remove" name="X-SDC-APPLICATION-ID" scope="transport"/>
+    <header action="remove" name="X-OP-APIKey" scope="transport"/>
+    <property expression="$ctx:log-status" name="HTTP_SC" scope="axis2" type="STRING"/>
+    <script language="js"><![CDATA[var payload = mc.getProperty("jsonPayload");
+  mc.setPayloadJSON(payload)]]></script>
+    <header expression="$ctx:originTo" name="To" scope="default"/>
+    <property expression="$ctx:originURL" name="REST_URL_POSTFIX" scope="axis2" type="STRING"/>
+    <property expression="$ctx:originMethod" name="HTTP_METHOD" scope="axis2" type="STRING"/>
+</sequence>

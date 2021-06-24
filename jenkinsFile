@@ -1,0 +1,88 @@
+def version ="v1"
+def epPath="/_system/config/resources/${version}/endpoints"
+def propPath="/_system/config/resources/${version}/properties"
+def xsltPath="/_system/config/resources/${version}/xslt"
+def seqPrivatePath="/_system/config/resources/${version}/mediation"
+def seqPublicPath="/_system/governance/apimgt/customsequences"
+def epDir="CommonResources/Endpoints"
+def propDir="CommonResources/Properties"
+def xsltDir="CommonResources/XSLT"
+def seqDir="CommonResources/Sequences"
+def usecase="RSU_CONSOMMATION"
+
+pipeline {
+    agent any
+    tools {nodejs "Node"}
+    environment {
+        CI = 'true'
+        WORKSPACE_DIR= "${workspace}"
+        API_DIR = "${params.API_Directory}"
+        BRANCH = "${params.Branch}"
+        DEV_ENV = "${params.Environment}"
+        URL_GIT = "http://gitlab.gitlab:80/add-interplatform/wso2/${params.API_Repository}.git"
+    }
+    stages {
+        stage('Preparation') {
+            steps{
+                git branch: "$BRANCH",
+                url: "$URL_GIT",
+                credentialsId: 'owner_user_git'
+            }
+        }
+        stage('Deploy') {
+            environment{
+                RETRY = '80'
+            }
+            steps {
+                echo "Logging into $DEV_ENV"
+                withCredentials([usernamePassword(credentialsId: 'apim_dev', usernameVariable: 'DEV_USERNAME', passwordVariable: 'DEV_PASSWORD')]) {
+                    sh 'apictl login $DEV_ENV -u $DEV_USERNAME -p $DEV_PASSWORD -k'
+                }
+
+                echo "Deploying to $DEV_ENV"
+                sh 'apictl import-api -f "$WORKSPACE_DIR/$API_DIR" -e $DEV_ENV -k --preserve-provider=true --update=true --verbose'
+                
+                echo "Configuring the script to upload the xml files to Carbon"
+                sh 'chmod 777 "$WORKSPACE_DIR/uploadFileToCarbon.sh"'
+                
+                echo "Uploading files to Carbon"
+                
+                sh '"$WORKSPACE_DIR/uploadFileToCarbon.sh" "$WORKSPACE_DIR/${epDir}/SYSTEM_API_${usecase}_SERVICES.xml" ${epPath}/SYSTEM_API_${usecase}_SERVICES.xml'
+                
+                sh '"$WORKSPACE_DIR/uploadFileToCarbon.sh" "$WORKSPACE_DIR/${propDir}/${usecase}_PROPERTIES_FILE.xml" ${propPath}/${usecase}_PROPERTIES_FILE.xml'
+                
+                sh '"$WORKSPACE_DIR/uploadFileToCarbon.sh" "$WORKSPACE_DIR/${xsltDir}/XSLT_${usecase}_SERVICES.xslt" ${xsltPath}/XSLT_${usecase}_SERVICES.xslt'
+                
+                sh '"$WORKSPACE_DIR/uploadFileToCarbon.sh" "$WORKSPACE_DIR/${seqDir}/IN_SEQ_MESSAGE_MEDIATION_PROCESS_API_${usecase}_SERVICES.xml" ${seqPrivatePath}/in/IN_SEQ_MESSAGE_MEDIATION_PROCESS_API_${usecase}_SERVICES.xml'
+                sh '"$WORKSPACE_DIR/uploadFileToCarbon.sh" "$WORKSPACE_DIR/${seqDir}/IN_SEQ_MESSAGE_MEDIATION_SYSTEM_API_${usecase}_SERVICES.xml" ${seqPrivatePath}/in/IN_SEQ_MESSAGE_MEDIATION_SYSTEM_API_${usecase}_SERVICES.xml'
+                sh '"$WORKSPACE_DIR/uploadFileToCarbon.sh" "$WORKSPACE_DIR/${seqDir}/OUT_SEQ_MESSAGE_MEDIATION_SYSTEM_API_${usecase}_SERVICES.xml" ${seqPrivatePath}/out/OUT_SEQ_MESSAGE_MEDIATION_SYSTEM_API_${usecase}_SERVICES.xml'
+                
+                
+                sh '"$WORKSPACE_DIR/uploadFileToCarbon.sh" "$WORKSPACE_DIR/${seqDir}/IN_SEQ_MAIN_EXPERIENCE_API_${usecase}_SERVICES-${version}.xml" ${seqPublicPath}/in/IN_SEQ_MAIN_EXPERIENCE_API_${usecase}_SERVICES-${version}.xml'
+                sh '"$WORKSPACE_DIR/uploadFileToCarbon.sh" "$WORKSPACE_DIR/${seqDir}/IN_SEQ_MAIN_PROCESS_API_${usecase}_SERVICES-${version}.xml" ${seqPublicPath}/in/IN_SEQ_MAIN_PROCESS_API_${usecase}_SERVICES-${version}.xml'
+                sh '"$WORKSPACE_DIR/uploadFileToCarbon.sh" "$WORKSPACE_DIR/${seqDir}/IN_SEQ_MAIN_SYSTEM_API_${usecase}_SERVICES-${version}.xml" ${seqPublicPath}/in/IN_SEQ_MAIN_SYSTEM_API_${usecase}_SERVICES-${version}.xml'
+                
+           
+                sh '"$WORKSPACE_DIR/uploadFileToCarbon.sh" "$WORKSPACE_DIR/${seqDir}/OUT_SEQ_MAIN_SYSTEM_API_${usecase}_SERVICES-${version}.xml" ${seqPublicPath}/out/OUT_SEQ_MAIN_SYSTEM_API_${usecase}_SERVICES-${version}.xml'    
+                sh '"$WORKSPACE_DIR/uploadFileToCarbon.sh" "$WORKSPACE_DIR/${seqDir}/FAULT_SEQ_MESSAGE_MEDIATION_EXPERIENCE_API_${usecase}_SERVICES-${version}.xml" ${seqPublicPath}/fault/FAULT_SEQ_MESSAGE_MEDIATION_EXPERIENCE_API_${usecase}_SERVICES-${version}.xml'
+                sh '"$WORKSPACE_DIR/uploadFileToCarbon.sh" "$WORKSPACE_DIR/${seqDir}/FAULT_SEQ_MESSAGE_MEDIATION_SYSTEM_API_${usecase}_SERVICES-${version}.xml" ${seqPublicPath}/fault/FAULT_SEQ_MESSAGE_MEDIATION_SYSTEM_API_${usecase}_SERVICES-${version}.xml'
+                
+                sh '"$WORKSPACE_DIR/uploadFileToCarbon.sh" "$WORKSPACE_DIR/${seqDir}/IN_SEQ_MESSAGE_MEDIATION_ONESITE_LOGS.xml" ${seqPublicPath}/in/IN_SEQ_MESSAGE_MEDIATION_ONESITE_LOGS.xml'
+                sh '"$WORKSPACE_DIR/uploadFileToCarbon.sh" "$WORKSPACE_DIR/${seqDir}/IN_SEQ_MESSAGE_MEDIATION_ONESITE_METRICS.xml" ${seqPublicPath}/in/IN_SEQ_MESSAGE_MEDIATION_ONESITE_METRICS.xml'
+                
+                
+            }
+        }
+    }
+    post {
+        cleanup {
+            deleteDir()
+            dir("${workspace}@tmp") {
+                deleteDir()
+            }
+            dir("${workspace}@script") {
+                deleteDir()
+            }
+        }
+    }
+}

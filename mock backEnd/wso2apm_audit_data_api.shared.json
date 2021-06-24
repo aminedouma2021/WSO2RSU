@@ -1,0 +1,457 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "API for audit WSO2 API Manager Gateway",
+        "description": "API for audit WSO2 API Manager Gateway",
+        "contact": {
+            "name": "ADD Morocco",
+            "url": "https://www.add.gov.ma/",
+            "email": "support@onesaitplatform.com"
+        },
+        "license": {
+            "name": "ADD Morocco",
+            "url": "https://www.add.gov.ma/"
+        },
+        "version": "v1"
+    },
+    "servers": [
+        {
+            "url": "/api-manager/server/api/v1/wso2apm_audit_data_api"
+        }
+    ],
+    "paths": {
+        "/audit": {
+            "post": {
+                "summary": "Insert new audit data",
+                "description": "Insert new audit data into kafka. The data format will be validated with the wso2apm_audit_data ontology",
+                "operationId": "postApiAudit",
+                "parameters": [
+                    {
+                        "name": "X-SDC-APPLICATION-ID",
+                        "in": "header",
+                        "description": "Streamsets X-SDC-APPLICATION-ID header",
+                        "required": true,
+                        "style": "simple",
+                        "explode": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "X-OP-APIKey",
+                        "in": "header",
+                        "description": "Onesait Platform API Key",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "array",
+                                "items": {
+                                    "type": "object",
+                                    "properties": {
+										"uuid": {
+											"description": "uuid of the record",
+											"type": "string",
+											"elasticsearch_type": "keyword"
+										},
+										"v": {
+											"description": "Version of the schema used",
+											"type": "integer",
+											"const": 1,
+											"elasticsearch_type": "short"
+										},
+										"creation_ts": {
+											"type": "string",
+											"format": "date-time",
+											"description": "date of creation in iso format"
+										},
+										"rq_ts_aip": {
+											"description": "Timestamp when the request arrives to AIP",
+											"type": "integer",
+											"elasticsearch_type": "long"
+										},
+										"rq_ts_srv": {
+											"description": "Time stamp when the request is sent to backend service",
+											"type": [
+												"integer",
+												"null"
+											],
+											"elasticsearch_type": "long"
+										},
+										"rq_size_aip": {
+											"description": "Request size received by the AIP",
+											"type": [
+												"integer",
+												"null"
+											],
+											"elasticsearch_type": "long"
+										},
+										"rq_size_srv": {
+											"description": "Request size sent to the backend service",
+											"type": [
+												"integer",
+												"null"
+											],
+											"elasticsearch_type": "long"
+										},
+										"rq_ip": {
+											"description": "IP of the requester",
+											"type": "string",
+											"elasticsearch_type": "text"
+										},
+										"url_aip": {
+											"description": "url exposed by the AIP",
+											"type": "string",
+											"elasticsearch_type": "text"
+										},
+										"url_srv": {
+											"description": "url exposed by the backend service",
+											"type": [
+												"string",
+												"null"
+											],
+											"elasticsearch_type": "text"
+										},
+										"rq_method_aip": {
+											"description": "HTTP method usen on the request",
+											"type": "string",
+											"enum": [
+												"GET",
+												"HEAD",
+												"POST",
+												"PUT",
+												"DELETE",
+												"CONNECT",
+												"OPTIONS",
+												"TRACE",
+												"PATCH"
+											],
+											"elasticsearch_type": "keyword"
+										},
+										"rq_method_srv": {
+											"description": "HTTP method used on the request to the backend service",
+											"type": [
+												"string",
+												"null"
+											],
+											"enum": [
+												"GET",
+												"HEAD",
+												"POST",
+												"PUT",
+												"DELETE",
+												"CONNECT",
+												"OPTIONS",
+												"TRACE",
+												"PATCH"
+											],
+											"elasticsearch_type": "keyword"
+										},
+										"authn_aip": {
+											"description": "Is authenticated by the AIP?",
+											"type": "boolean"
+										},
+										"authn_srv": {
+											"description": "Is authenticated by the backend service?",
+											"type": [
+												"boolean",
+												"null"
+											]
+										},
+										"authz_aip": {
+											"description": "Is authorized by the AIP?",
+											"type": "boolean"
+										},
+										"authz_srv": {
+											"description": "Is authorized by the backend service?",
+											"type": [
+												"boolean",
+												"null"
+											]
+										},
+										"consumer_id": {
+											"description": "Consumer identification",
+											"type": "string",
+											"elasticsearch_type": "keyword"
+										},
+										"srv_owner_id": {
+											"description": "Identification of the owner of the backend service",
+											"type": "string",
+											"elasticsearch_type": "keyword"
+										},
+										"rs_code_aip": {
+											"description": "Response code of the AIP",
+											"type": "integer",
+											"minimum": 100,
+											"maximum": 599,
+											"elasticsearch_type": "short"
+										},
+										"rs_code_srv": {
+											"description": "Response code of the backend service",
+											"type": [
+												"integer",
+												"null"
+											],
+											"minimum": 100,
+											"maximum": 599,
+											"elasticsearch_type": "short"
+										},
+										"rs_size_aip": {
+											"description": "Response size of the AIP",
+											"type": [
+												"integer",
+												"null"
+											],
+											"elasticsearch_type": "long"
+										},
+										"rs_size_srv": {
+											"description": "Response size of the backend service",
+											"type": [
+												"integer",
+												"null"
+											],
+											"elasticsearch_type": "long"
+										},
+										"rs_ts_aip": {
+											"description": "Timestamp when the response is sent by the AIP",
+											"type": "integer",
+											"elasticsearch_type": "long"
+										},
+										"rs_ts_srv": {
+											"description": "Timestamp when the response is received from the backend service",
+											"type": [
+												"integer",
+												"null"
+											],
+											"elasticsearch_type": "long"
+										},
+										"rq_headers_aip": {
+											"description": "Request headers of the request received by the AIP",
+											"type": [
+												"object",
+												"null"
+											],
+											"elasticsearch_type": "object"
+										},
+										"rq_headers_srv": {
+											"description": "Request headers sent to the backed service",
+											"type": [
+												"object",
+												"null"
+											],
+											"elasticsearch_type": "object"
+										},
+										"rs_headers_aip": {
+											"description": "Response headers sent by the AIP to the consumer",
+											"type": [
+												"object",
+												"null"
+											],
+											"elasticsearch_type": "object"
+										},
+										"rs_headers_srv": {
+											"description": "Response headers received from the backend service",
+											"type": [
+												"object",
+												"null"
+											],
+											"elasticsearch_type": "object"
+										},
+										"msg": {
+											"description": "Optional message to be recorded. E.g. Error message.",
+											"type": "string",
+											"elasticsearch_type": "string"
+										},
+										"signature": {
+											"description": "If signed, the signature of the record",
+											"type": "string",
+											"elasticsearch_type": "string"
+										},
+                                        "api_name": {
+                                            "description": "Name of the API in WSO2",
+                                            "type": "string",
+                                            "elasticsearch_type": "keyword"
+                                        }
+									},
+                                    "required": [
+                                        "uuid",
+                                        "rq_ts_aip",
+                                        "rq_ts_srv",
+                                        "rq_size_aip",
+                                        "rq_size_srv",
+                                        "rq_ip",
+                                        "url_aip",
+                                        "url_srv",
+                                        "rq_method_aip",
+                                        "rq_method_srv",
+                                        "authn_aip",
+                                        "authn_srv",
+                                        "authz_aip",
+                                        "authz_srv",
+                                        "consumer_id",
+                                        "srv_owner_id",
+                                        "rs_code_aip",
+                                        "rs_code_srv",
+                                        "rs_size_aip",
+                                        "rs_size_srv",
+                                        "rs_ts_aip",
+                                        "rs_ts_srv",
+                                        "rq_headers_aip",
+                                        "rq_headers_srv",
+                                        "rs_headers_aip",
+                                        "rs_headers_srv",
+                                        "api_name"
+                                    ],
+                                    "additionalProperties": false
+                                }
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "New data inserted"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "403": {
+                        "description": "Not authorized"
+                    },
+                    "500": {
+                        "description": "Error processing request"
+                    }
+                }
+            }
+        },
+        "/log": {
+            "post": {
+                "summary": "Insert new log data",
+                "description": "Insert new log data into kafka. The data format will be validated with the wso2apm_log ontology",
+                "operationId": "postApiLog",
+                "parameters": [
+                    {
+                        "name": "X-SDC-APPLICATION-ID",
+                        "in": "header",
+                        "description": "Streamsets X-SDC-APPLICATION-ID header",
+                        "required": true,
+                        "style": "simple",
+                        "explode": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "X-OP-APIKey",
+                        "in": "header",
+                        "description": "Onesait Platform API Key",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "array",
+                                "items": {
+                                    "type": "object",
+                                    "required": [
+                                        "id_instance",
+                                        "process_name",
+                                        "ts",
+                                        "status",
+                                        "id_api",
+                                        "id_operation",
+                                        "id_service",
+                                        "activity",
+                                        "headers",
+                                        "msg"
+                                    ],
+                                    "properties": {
+                                        "id_instance": {
+                                            "description": "UUID of the instance",
+                                            "type": "string",
+                                            "elasticsearch_type": "keyword"
+                                        },
+                                        "process_name": {
+                                            "description": "Process name",
+                                            "type": "string",
+                                            "elasticsearch_type": "keyword"
+                                        },
+                                        "ts": {
+                                            "type": "string",
+                                            "format": "date-time",
+                                            "description": "timestamp of the record in ISO format"
+                                        },
+                                        "status": {
+                                            "description": "Response code of the AIP",
+                                            "type": "integer",
+                                            "minimum": 100,
+                                            "maximum": 599,
+                                            "elasticsearch_type": "short"
+                                        },
+                                        "id_api": {
+                                            "description": "API id",
+                                            "type": "string",
+                                            "elasticsearch_type": "keyword"
+                                        },
+                                        "id_operation": {
+                                            "description": "Operation id",
+                                            "type": "string",
+                                            "elasticsearch_type": "keyword"
+                                        },
+                                        "id_service": {
+                                            "description": "Service id",
+                                            "type": "string",
+                                            "elasticsearch_type": "keyword"
+                                        },
+                                        "activity": {
+                                            "description": "Information about the activity performed in the API Manager Gateway",
+                                            "type": "string",
+                                            "elasticsearch_type": "text"
+                                        },
+                                        "headers": {
+                                            "description": "HTTP headers",
+                                            "type": "string"
+                                        },
+                                        "msg": {
+                                            "description": "Log message",
+                                            "type": "string",
+                                            "elasticsearch_type": "text"
+                                        }
+                                    },
+                                    "additionalProperties": false
+                                }
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "New data inserted"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "403": {
+                        "description": "Not authorized"
+                    },
+                    "500": {
+                        "description": "Error processing request"
+                    }
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sequence name="IN_SEQ_MAIN_EXPERIENCE_API_CONSOMMATION_SERVICES-v1" trace="disable" xmlns="http://ws.apache.org/ns/synapse">
+    <switch source="$axis2:REST_URL_POSTFIX">
+        <case regex=".*\/consommation\?.*">
+            <property expression="fn:concat('http://localhost:8280/', 'redal-consommation-services/v1')" name="service_ep" scope="default" type="STRING"/>
+        </case>
+        <case regex=".*\/consommation\/specific\/.*">
+            <property expression="fn:concat('http://localhost:8280/', 'redal-consommation-process-services/v1')" name="service_ep" scope="default" type="STRING"/>
+        </case>
+        <default/>
+    </switch>
+    <!-- Metrics -->
+    <property expression="$trp:X-Client-ID" name="header_X-Client-ID" scope="default" type="STRING"/>
+    <property expression="$trp:X-Request-ID" name="header_X-Request-ID" scope="default" type="STRING"/>
+    <property expression="$trp:X-Request-Application-Name" name="header_X-Request-Application-Name" scope="default" type="STRING"/>
+    <property expression="$trp:Content-Length" name="Content-Length" scope="default" type="STRING"/>
+    <filter regex="false" source="boolean(get-property('Content-Length'))">
+        <then>
+            <script language="js"><![CDATA[var msgLength =
+				mc.getEnvelopeXML().toString().length;
+				mc.setProperty("MSG_LENGTH", java.lang.Integer(msgLength));]]></script>
+            <property expression="$ctx:MSG_LENGTH" name="Content-Length" scope="default" type="STRING"/>
+        </then>
+        <else/>
+    </filter>
+    <log>
+        <property expression="$ctx:Content-Length" name="request size"/>
+    </log>
+    <property expression="$trp:Content-Type" name="Content-Type" scope="default" type="STRING"/>
+    <property expression="$trp:Server" name="Server" scope="default" type="STRING"/>
+    <property expression="$trp:Date" name="Date" scope="default" type="STRING"/>
+    <property expression="$trp:User-Agent" name="User-Agent" scope="default" type="STRING"/>
+    <property name="APIName" scope="default" type="STRING" value="EXPERIENCE_API_CONSOMMATION_SERVICES"/>
+    <!-- /Metrics -->
+    <switch source="boolean($ctx:header_X-Client-ID)">
+        <case regex="false">
+            <property name="HTTP_SC" scope="axis2" type="STRING" value="400"/>
+            <payloadFactory media-type="json">
+                <format>
+					{
+					"codeRetour": "400"
+					}
+				</format>
+                <args/>
+            </payloadFactory>
+            <property action="remove" name="TRANSPORT_HEADERS" scope="axis2"/>
+            <respond/>
+        </case>
+        <default>
+            <switch source="boolean($ctx:header_X-Request-ID)">
+                <case regex="false">
+                    <property name="HTTP_SC" scope="axis2" type="STRING" value="400"/>
+                    <payloadFactory media-type="json">
+                        <format>
+							{
+							"codeRetour": "400"
+							}
+						</format>
+                        <args/>
+                    </payloadFactory>
+                    <property action="remove" name="TRANSPORT_HEADERS" scope="axis2"/>
+                    <respond/>
+                </case>
+                <default>
+                    <switch source="boolean($ctx:header_X-Request-Application-Name)">
+                        <case regex="false">
+                            <property name="HTTP_SC" scope="axis2" type="STRING" value="400"/>
+                            <payloadFactory media-type="json">
+                                <format>
+									{
+									"codeRetour": "400"
+									}
+								</format>
+                                <args/>
+                            </payloadFactory>
+                            <property action="remove" name="TRANSPORT_HEADERS" scope="axis2"/>
+                            <respond/>
+                        </case>
+                        <default>
+                            <property action="remove" name="TRANSPORT_HEADERS" scope="axis2"/>
+                            <property expression="get-property('registry','conf:/resources/v1/properties/RSU_PROPERTIES_FILE.xml')" name="xmlFile" scope="default" type="OM"/>
+                            <property expression="$ctx:xmlFile//ApiKeyConsommationServices" name="regPropertyApiKey" scope="default" type="STRING"/>
+                            <header expression="$ctx:regPropertyApiKey" name="apikey" scope="transport"/>
+                            <header expression="$ctx:header_X-Client-ID" name="X-Client-ID" scope="transport"/>
+                            <header expression="$ctx:header_X-Request-ID" name="X-Request-ID" scope="transport"/>
+                            <header expression="$ctx:header_X-Request-Application-Name" name="X-Request-Application-Name" scope="transport"/>
+                            <!-- Metrics -->
+                            <header expression="$axis2:REMOTE_ADDR" name="X-Requester-IP" scope="transport"/>
+                            <header expression="get-property(&quot;SYSTEM_DATE&quot;, &quot;yyyy-MM-dd'T'HH:mm:ss.SSSXXX&quot;)" name="X-Request-Date-TS" scope="transport"/>
+                            <header expression="get-property(&quot;SYSTEM_TIME&quot;)" name="X-Request-Timestamp" scope="transport"/>
+                            <header expression="$axis2:REST_URL_POSTFIX" name="X-Request-URL" scope="transport"/>
+                            <header expression="$axis2:HTTP_METHOD" name="X-Request-Method" scope="transport"/>
+                            <header expression="$ctx:Content-Length" name="X-Request-Length" scope="transport"/>
+                            <header expression="$ctx:Content-Type" name="X-Request-Content-Type" scope="transport"/>
+                            <header expression="$ctx:Server" name="X-Request-Server" scope="transport"/>
+                            <header expression="$ctx:Date" name="X-Request-Date" scope="transport"/>
+                            <header expression="$ctx:User-Agent" name="X-Request-User-Agent" scope="transport"/>
+                            <header expression="$ctx:APIName" name="X-Request-API-Name" scope="transport"/>
+                            <!-- /Metrics -->
+                            <header expression="get-property('service_ep')" name="To" scope="default"/>
+                            <!-- Logs -->
+                            <property expression="$ctx:header_X-Request-ID" name="log-id_instance" scope="default" type="STRING"/>
+                            <property name="log-process_name" scope="default" type="STRING" value="IN_SEQ_MAIN_EXPERIENCE_API_CONSOMMATION_SERVICES"/>
+                            <property expression="get-property(&quot;SYSTEM_DATE&quot;, &quot;yyyy-MM-dd'T'HH:mm:ss.SSSXXX&quot;)" name="log-ts" scope="default" type="STRING"/>
+                            <property name="log-status" scope="default" type="STRING" value="200"/>
+                            <property name="log-id_api" scope="default" type="STRING" value="EXPERIENCE-API-CONSOMMATION-SERVICES"/>
+                            <property name="log-id_operation" scope="default" type="STRING" value="LOG-IN-SEQ"/>
+                            <property name="log-id_service" scope="default" type="STRING" value="IN-SEQ"/>
+                            <property name="log-activity" scope="default" type="STRING" value="EXPERIENCE API INPUT MEDIATION SEQUENCE"/>
+                            <property expression="fn:concat('Content-Length: ',$ctx:Content-Length,', Content-Type: ',$ctx:Content-Type,', Server: ',$ctx:Server,', Date: ',$ctx:Date,', User-Agent: ',$ctx:User-Agent)" name="log-headers" scope="default" type="STRING"/>
+                            <property name="log-msg" scope="default" type="STRING" value="REQUEST RECEIVED: OK"/>
+                            <!--<sequence key="conf:resources/v1/mediation/in/IN_SEQ_MESSAGE_MEDIATION_ONESITE_LOGS.xml"/>-->
+                            <!-- /Logs -->
+                        </default>
+                    </switch>
+                </default>
+            </switch>
+        </default>
+    </switch>
+</sequence>

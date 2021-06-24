@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sequence name="IN_SEQ_MAIN_PROCESS_API_RSU_CONSOMMATION_SERVICES-v1" trace="disable" xmlns="http://ws.apache.org/ns/synapse">
+    <sequence key="conf:resources/v1/mediation/in/IN_SEQ_MESSAGE_MEDIATION_PROCESS_API_RSU_CONSOMMATION_SERVICES.xml"/>
+</sequence>

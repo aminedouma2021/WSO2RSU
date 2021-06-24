@@ -1,0 +1,90 @@
+id:
+  providerName: admin
+  apiName: ExperienceAPI-consommation-services-v1
+  version: 1.0.1
+  id: 0
+uuid: 1aadc368-e630-4033-8c3a-2068d9f88450
+type: HTTP
+context: /consommation-services/v1/1.0.1
+contextTemplate: /consommation-services/v1/{version}
+tags:
+ - RSU
+documents: []
+lastUpdated: Jun 9, 2021, 1:30:03 PM
+availableTiers:
+ -
+  name: Unlimited
+  displayName: Unlimited
+  description: Allows unlimited requests
+  requestsPerMin: 2147483647
+  requestCount: 2147483647
+  unitTime: 0
+  timeUnit: ms
+  tierPlan: FREE
+  stopOnQuotaReached: true
+availableSubscriptionLevelPolicies: []
+uriTemplates: []
+apiHeaderChanged: false
+apiResourcePatternsChanged: false
+status: PUBLISHED
+visibility: public
+gatewayLabels: []
+endpointSecured: false
+endpointAuthDigest: false
+transports: http,https
+inSequence: IN_SEQ_MAIN_EXPERIENCE_API_CONSOMMATION_SERVICES-v1
+faultSequence: FAULT_SEQ_MESSAGE_MEDIATION_EXPERIENCE_API_RSU_CONSOMMATION_SERVICES-v1
+advertiseOnly: false
+subscriptionAvailability: current_tenant
+corsConfiguration:
+  corsConfigurationEnabled: false
+  accessControlAllowOrigins:
+   - '*'
+  accessControlAllowCredentials: true
+  accessControlAllowHeaders:
+   - authorization
+   - Access-Control-Allow-Origin
+   - Content-Type
+   - SOAPAction
+   - apikey
+   - testKey
+  accessControlAllowMethods:
+   - GET
+   - PUT
+   - POST
+   - DELETE
+   - PATCH
+   - OPTIONS
+endpointConfig: '{"endpoint_type":"default","sandbox_endpoints":{"url":"default"},"failOver":"False","production_endpoints":{"template_not_supported":false,"url":""}}'
+responseCache: Disabled
+cacheTimeout: 300
+implementation: ENDPOINT
+authorizationHeader: Authorization
+scopes: []
+isDefaultVersion: false
+isPublishedDefaultVersion: false
+keyManagers:
+ - all
+environments:
+ - Production and Sandbox
+createdTime: "1623225563659"
+additionalProperties: {}
+monetizationProperties: {}
+isMonetizationEnabled: false
+environmentList:
+ - SANDBOX
+ - PRODUCTION
+apiSecurity: oauth2,oauth_basic_auth_api_key_mandatory
+endpoints: []
+enableSchemaValidation: false
+apiCategories:
+-
+  id: 18131f70-b9a3-479a-8add-c461b7e5ee8a
+  name: ExperienceAPI
+  description: Experience APIs
+  numberOfAPIs: 0
+  tenantID: -1234
+enableStore: true
+accessControl: all
+rating: 0.0
+isLatest: true

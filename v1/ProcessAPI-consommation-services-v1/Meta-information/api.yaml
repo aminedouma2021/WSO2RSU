@@ -1,0 +1,89 @@
+id:
+  providerName: admin
+  apiName: ProcessAPI-consommation-services
+  version: 1.0.0
+  id: 0
+uuid: 35e09ae2-083a-4455-80f5-56c96b67d13b
+type: HTTP
+context: /redal-process-consommation-services/v1/1.0.0
+contextTemplate: /redal-process-consommation-services/v1/{version}
+tags:
+ - RSU
+documents: []
+lastUpdated: Jun 9, 2021, 1:27:15 PM
+availableTiers:
+ -
+  name: Unlimited
+  displayName: Unlimited
+  description: Allows unlimited requests
+  requestsPerMin: 2147483647
+  requestCount: 2147483647
+  unitTime: 0
+  timeUnit: ms
+  tierPlan: FREE
+  stopOnQuotaReached: true
+availableSubscriptionLevelPolicies: []
+uriTemplates: []
+apiHeaderChanged: false
+apiResourcePatternsChanged: false
+status: PUBLISHED
+visibility: public
+gatewayLabels: []
+endpointSecured: false
+endpointAuthDigest: false
+transports: http,https
+inSequence: IN_SEQ_MAIN_PROCESS_API_RSU_CONSOMMATION_SERVICES-v1
+advertiseOnly: false
+subscriptionAvailability: current_tenant
+corsConfiguration:
+  corsConfigurationEnabled: false
+  accessControlAllowOrigins:
+   - '*'
+  accessControlAllowCredentials: true
+  accessControlAllowHeaders:
+   - authorization
+   - Access-Control-Allow-Origin
+   - Content-Type
+   - SOAPAction
+   - apikey
+   - testKey
+  accessControlAllowMethods:
+   - GET
+   - PUT
+   - POST
+   - DELETE
+   - PATCH
+   - OPTIONS
+endpointConfig: '{"endpoint_type":"http","sandbox_endpoints":{"url":"http:\/\/localhost:8082"},"production_endpoints":{"url":"http:\/\/localhost:8082"}}'
+responseCache: Disabled
+cacheTimeout: 300
+implementation: ENDPOINT
+authorizationHeader: Authorization
+scopes: []
+isDefaultVersion: false
+isPublishedDefaultVersion: false
+keyManagers:
+ - all
+environments:
+ - Production and Sandbox
+createdTime: "1623225730342"
+additionalProperties: {}
+monetizationProperties: {}
+isMonetizationEnabled: false
+environmentList:
+ - SANDBOX
+ - PRODUCTION
+apiSecurity: api_key,oauth_basic_auth_api_key_mandatory
+endpoints: []
+enableSchemaValidation: false
+apiCategories:
+ -
+  id: b6ec8257-1175-4c96-a90d-efbe6453a28f
+  name: ProcessAPI
+  description: Process APIs
+  numberOfAPIs: 0
+  tenantID: -1234
+enableStore: true
+accessControl: all
+rating: 0.0
+isLatest: true
