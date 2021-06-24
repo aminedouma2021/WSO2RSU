@@ -39,7 +39,6 @@ paths:
               examples: 
                 Response1:
                   value:
-                   consommation:
                     codeRetour: "200"
                     cnie: "asap54"
                     nomPrenom: "rodrigo escapa"

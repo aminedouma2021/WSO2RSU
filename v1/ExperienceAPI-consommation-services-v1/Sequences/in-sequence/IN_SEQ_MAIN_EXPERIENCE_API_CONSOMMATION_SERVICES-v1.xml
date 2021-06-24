@@ -4,8 +4,8 @@
         <case regex=".*\/consommation\?.*">
             <property expression="fn:concat('http://localhost:8280/', 'redal-consommation-services/v1/1.0.1')" name="service_ep" scope="default" type="STRING"/>
         </case>
-        <case regex=".*\/consommation\/specific\/.*">
-            <property expression="fn:concat('http://localhost:8280/', 'redal-consommation-process-services/v1')" name="service_ep" scope="default" type="STRING"/>
+        <case regex=".*\/consommation\/specific\?.*">
+            <property expression="fn:concat('http://localhost:8280/', 'redal-process-consommation-services/v1')" name="service_ep" scope="default" type="STRING"/>
         </case>
         <default/>
     </switch>

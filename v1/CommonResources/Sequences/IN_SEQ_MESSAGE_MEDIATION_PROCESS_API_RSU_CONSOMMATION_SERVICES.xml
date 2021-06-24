@@ -43,7 +43,7 @@
                     <payloadFactory media-type="json">
                         <format>
 							{
-							"consommation": [{
+							"consommation": {
 							"codeRetour": "$1",
 							"cnie": "$2",
 							"nomPrenom":
@@ -54,7 +54,7 @@
 							"sousQuartier": "$7",
 							"immeuble": "$8",
 							"complementAdresse": "$9"
-							}]
+							 }
 							}
 						</format>
                         <args>
