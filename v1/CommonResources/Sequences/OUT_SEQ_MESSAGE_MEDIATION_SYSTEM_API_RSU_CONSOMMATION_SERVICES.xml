@@ -27,7 +27,7 @@
             <switch source="get-property('default','URL_BACKEND')">
                 <case regex=".*\/consommation\?.*">
                     <log>
-                        <property expression="json-eval($.consommation)" name="conso1"/>
+                        <property expression="json-eval($.consommation)" name="consommation"/>
                     </log>
                     <payloadFactory media-type="json">
                         <format>

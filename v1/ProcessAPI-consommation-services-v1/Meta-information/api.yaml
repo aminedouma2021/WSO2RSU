@@ -54,7 +54,7 @@ corsConfiguration:
    - DELETE
    - PATCH
    - OPTIONS
-endpointConfig: '{"endpoint_type":"http","sandbox_endpoints":{"url":"http:\/\/localhost:8082"},"production_endpoints":{"url":"http:\/\/localhost:8082"}}'
+endpointConfig: '{"endpoint_type":"http","sandbox_endpoints":{"url":"http:\/\/localhost:8280"},"production_endpoints":{"template_not_supported":false,"url":"http:\/\/localhost:8082"}}'
 responseCache: Disabled
 cacheTimeout: 300
 implementation: ENDPOINT
