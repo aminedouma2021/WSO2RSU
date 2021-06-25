@@ -39,28 +39,28 @@ paths:
               examples: 
                 Response1:
                   value:
-                    codeRetour: "200"
-                    cnie: "asap54"
-                    nomPrenom: "rodrigo escapa"
-                    prefecture: 0
-                    commune: 1
-                    quartier: 2
-                    sousQuartier: 3
-                    immeuble: 4
-                    complementAdresse: string
-                    listeConsommations:
-                      mois: 0
-                      annee: 0
-                      montantEau: 0
-                      montantElectricite: 0
-                    listeConsommationAutresResidences:
-                      cil: 0
-                      adresse: string
-                      commune: 0
-                      mois: 0
-                      annee: 0
-                      montantEau: 0
-                      montantElectricite: 0
+                    CodeRetour: "200"
+                    CNIE: "asap54"
+                    NomPrenom: "rodrigo escapa"
+                    Prefecture: 0
+                    Commune: 1
+                    Quartier: 2
+                    SousQuartier: 3
+                    Immeuble: 4
+                    ComplementAdresse: string
+                    ListeConsommations:
+                      Mois: 0
+                      Annee: 0
+                      MontantEau: 0
+                      MontantElectricite: 0
+                    ListeConsommationAutresResidences:
+                      CIL: 0
+                      Adresse: string
+                      Commune: 0
+                      Mois: 0
+                      Annee: 0
+                      MontantEau: 0
+                      MontantElectricite: 0
 
         '103':
           description: Premiers indices.
