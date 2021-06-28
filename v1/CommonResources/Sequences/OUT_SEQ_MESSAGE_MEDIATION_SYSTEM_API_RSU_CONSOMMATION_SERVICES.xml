@@ -24,62 +24,51 @@
         <then>
             <property name="propMsgResponse" scope="default" type="STRING" value="OK"/>
             <property expression="json-eval($.codeRetour)" name="codeRetour" scope="default" type="STRING"/>
-            <log>
-                <property expression="json-eval($)" name="mydollar"/>
-            </log>
             <switch source="get-property('default','URL_BACKEND')">
                 <case regex=".*\/consommation\?.*">
                     <payloadFactory media-type="json">
                         <format>
 							{
-							"consommation": {
-							"codeRetour": "$1",
-							"cnie": "$2",
-							"nomPrenom":"$3",
-							"prefecture": "$4",
-							"commune": "$5",
-							"quartier":"$6",
-							"sousQuartier": "$7",
-							"immeuble": "$8",
-							"complementAdresse": "$9",
-							"listeConsommations": $10,
-							"listeConsommationAutresResidences":$11
-							 }
+							"consommation": $1
 							}
 						</format>
                         <args>
-                            <arg evaluator="json" expression="$.CodeRetour"/>
-                            <arg evaluator="json" expression="$.CNIE"/>
-                            <arg evaluator="json" expression="$.NomPrenom"/>
-                            <arg evaluator="json" expression="$.Prefecture"/>
-                            <arg evaluator="json" expression="$.Commune"/>
-                            <arg evaluator="json" expression="$.Quartier"/>
-                            <arg evaluator="json" expression="$.Sousquartier"/>
-                            <arg evaluator="json" expression="$.Immeuble"/>
-                            <arg evaluator="json" expression="$.ComplementAdresse"/>
-                            <arg evaluator="json" expression="$.ListeConsommations"/>
-                            <arg evaluator="json" expression="$.ListeConsommationAutresResidences"/>
+                            <arg evaluator="json" expression="$"/>
                         </args>
                     </payloadFactory>
-                    <filter regex="^null$" source="json-eval($.ListeConsommations)">
+                    <filter regex="^null$" source="json-eval($.consommation)">
                         <then/>
                         <else>
-                            <foreach expression="//ListeConsommations">
+                            <foreach expression="//consommation">
                                 <sequence>
                                     <payloadFactory media-type="xml">
                                         <format>
-                                            <listeConsommations>
-                                                <mois>$1</mois>
-                                                <annee>$2</annee>
-                                                <montantEau>$3</montantEau>
-                                                <montantElectricite>$4</montantElectricite>
-                                            </listeConsommations>
+                                            <consommation>
+                                                <codeRetour>$1</codeRetour>
+                                                <cnie>$2</cnie>
+                                                <nomPrenom>$3</nomPrenom>
+                                                <prefecture>$4</prefecture>
+                                                <commune>$5</commune>
+                                                <quartier>$6</quartier>
+                                                <sousQuartier>$7</sousQuartier>
+                                                <immeuble>$8</immeuble>
+                                                <complementAdresse>$9</complementAdresse>
+                                                $10
+                                               $11
+                                            </consommation>
                                         </format>
                                         <args>
-                                            <arg evaluator="json" expression="'$.ListeConsommations.Mois'"/>
-                                            <arg evaluator="json" expression="'$.ListeConsommations.Annee'"/>
-                                            <arg evaluator="json" expression="'$.ListeConsommations.MontantEau'"/>
-                                            <arg evaluator="json" expression="'$.ListeConsommations.MontantElectricite'"/>
+                                            <arg evaluator="json" expression="$.consommation.CodeRetour"/>
+                                            <arg evaluator="json" expression="$.consommation.CNIE"/>
+                                            <arg evaluator="json" expression="$.consommation.NomPrenom"/>
+                                            <arg evaluator="json" expression="$.consommation.Prefecture"/>
+                                            <arg evaluator="json" expression="$.consommation.Commune"/>
+                                            <arg evaluator="json" expression="$.consommation.Quartier"/>
+                                            <arg evaluator="json" expression="$.consommation.SousQuartier"/>
+                                            <arg evaluator="json" expression="$.consommation.Immeuble"/>
+                                            <arg evaluator="json" expression="$.consommation.ComplementAdresse"/>
+                                            <arg evaluator="xml" expression="//consommation//ListeConsommations"/>
+                                            <arg evaluator="xml" expression="//consommation//ListeConsommationAutresResidences"/>
                                         </args>
                                     </payloadFactory>
                                 </sequence>
@@ -96,10 +85,45 @@
                             <arg evaluator="xml" expression="$body/*[1]"/>
                         </args>
                     </payloadFactory>
-                    <filter regex="^null$" source="json-eval($.ListeConsommationAutresResidences)">
+                    <filter regex="^null$" source="json-eval($.consommation.ListeConsommations)">
                         <then/>
                         <else>
-                            <foreach expression="//ListeConsommationAutresResidences">
+                            <foreach expression="//consommation/ListeConsommations">
+                                <sequence>
+                                    <payloadFactory media-type="xml">
+                                        <format>
+                                            <listeConsommations>
+                                                <mois>$1</mois>
+                                                <annee>$2</annee>
+                                                <montantEau>$3</montantEau>
+                                                <montantElectricite>$4</montantElectricite>
+                                            </listeConsommations>
+                                        </format>
+                                        <args>
+                                            <arg evaluator="json" expression="$.ListeConsommations.Mois"/>
+                                            <arg evaluator="json" expression="$.ListeConsommations.Annee"/>
+                                            <arg evaluator="json" expression="$.ListeConsommations.MontantEau"/>
+                                            <arg evaluator="json" expression="$.ListeConsommations.MontantElectricite"/>
+                                        </args>
+                                    </payloadFactory>
+                                </sequence>
+                            </foreach>
+                        </else>
+                    </filter>
+                    <!-- store the listConsommations array object in the global listConsommations 
+						object -->
+                    <payloadFactory media-type="json">
+                        <format>
+							$1
+						</format>
+                        <args>
+                            <arg evaluator="xml" expression="$body/*[1]"/>
+                        </args>
+                    </payloadFactory>
+                    <filter regex="^null$" source="json-eval($.consommation.ListeConsommationAutresResidences)">
+                        <then/>
+                        <else>
+                            <foreach expression="//consommation/ListeConsommationAutresResidences">
                                 <sequence>
                                     <payloadFactory media-type="xml">
                                         <format>
@@ -114,13 +138,13 @@
                                             </listeConsommationAutresResidences>
                                         </format>
                                         <args>
-                                            <arg evaluator="json" expression="'$.ListeConsommationAutresResidences.CIL'"/>
-                                            <arg evaluator="json" expression="'$.ListeConsommationAutresResidences.Adresse'"/>
-                                            <arg evaluator="json" expression="'$.ListeConsommationAutresResidences.Commune'"/>
-                                            <arg evaluator="json" expression="'$.ListeConsommationAutresResidences.Mois'"/>
-                                            <arg evaluator="json" expression="'$.ListeConsommationAutresResidences.Annee'"/>
-                                            <arg evaluator="json" expression="'$.ListeConsommationAutresResidences.MontantEau'"/>
-                                            <arg evaluator="json" expression="'$.ListeConsommationAutresResidences.MontantElectricite'"/>
+                                            <arg evaluator="json" expression="$.ListeConsommationAutresResidences.CIL"/>
+                                            <arg evaluator="json" expression="$.ListeConsommationAutresResidences.Adresse"/>
+                                            <arg evaluator="json" expression="$.ListeConsommationAutresResidences.Commune"/>
+                                            <arg evaluator="json" expression="$.ListeConsommationAutresResidences.Mois"/>
+                                            <arg evaluator="json" expression="$.ListeConsommationAutresResidences.Annee"/>
+                                            <arg evaluator="json" expression="$.ListeConsommationAutresResidences.MontantEau"/>
+                                            <arg evaluator="json" expression="$.ListeConsommationAutresResidences.MontantElectricite"/>
                                         </args>
                                     </payloadFactory>
                                 </sequence>

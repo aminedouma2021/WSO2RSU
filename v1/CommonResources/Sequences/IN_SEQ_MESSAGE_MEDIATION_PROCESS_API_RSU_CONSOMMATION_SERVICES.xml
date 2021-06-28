@@ -10,14 +10,13 @@
     <property expression="$url:commune" name="uri.var.commune" scope="default" type="STRING"/>
     <property expression="$url:dateDebut" name="uri.var.dateDebut" scope="default" type="STRING"/>
     <property expression="$url:dateFin" name="uri.var.dateFin" scope="default" type="STRING"/>
-    <log>
-        <property expression="$axis2:REST_URL_POSTFIX" name="The basePath comming from experience api"/>
-    </log>
     <property action="remove" name="REST_URL_POSTFIX" scope="axis2"/>
     <call blocking="true">
         <endpoint key="conf:resources/v1/endpoints/SYSTEM_API_RSU_CONSOMMATION_SERVICES.xml"/>
     </call>
     <property expression="json-eval($.consommation.codeRetour)" name="codeRetour" scope="default" type="STRING"/>
+    <property expression="json-eval($.consommation)" name="consommation" scope="default" type="STRING"/>
+    <property expression="json-eval($.consommation.listeConsommations)" name="consommationList" scope="default" type="STRING"/>
     <switch source="get-property('codeRetour')">
         <case regex="^000$|^400$|^500$|^100$|^300$|^600$|^700$">
             <filter regex="^null$" source="get-property('codeRetour')">
@@ -39,36 +38,67 @@
         <default>
             <filter regex="^200$" source="get-property('codeRetour')">
                 <then>
-                    <property expression="$ctx:response" name="responseScript" scope="default" type="STRING"/>
-                    <payloadFactory media-type="json">
-                        <format>
-							{
-							"consommation": {
-							"codeRetour": "$1",
-							"cnie": "$2",
-							"nomPrenom":
-							"$3",
-							"prefecture": "$4",
-							"commune": "$5",
-							"quartier":"$6",
-							"sousQuartier": "$7",
-							"immeuble": "$8",
-							"complementAdresse": "$9"
-							 }
-							}
-						</format>
-                        <args>
-                            <arg evaluator="json" expression="$.consommation.codeRetour"/>
-                            <arg evaluator="json" expression="$.consommation.cnie"/>
-                            <arg evaluator="json" expression="$.consommation.nomPrenom"/>
-                            <arg evaluator="json" expression="$.consommation.prefecture"/>
-                            <arg evaluator="json" expression="$.consommation.commune"/>
-                            <arg evaluator="json" expression="$.consommation.quartier"/>
-                            <arg evaluator="json" expression="$.consommation.sousquartier"/>
-                            <arg evaluator="json" expression="$.consommation.immeuble"/>
-                            <arg evaluator="json" expression="$.consommation.complementAdresse"/>
-                        </args>
-                    </payloadFactory>
+                    <log>
+                        <property expression="get-property('consommationList')" name="conso_payload"/>
+                    </log>
+                    <script language="js"><![CDATA[var consommationListe = JSON.parse(mc.getProperty("consommationList").toString()); 
+                                                 var isChecked = false;
+													for(var i = 0;i<consommationListe.length;i++)
+													   {
+													      var current_year= parseInt(consommationListe[i].annee);
+													      if(current_year > 2020){
+													         isChecked= true;break;
+													      }else{
+													         isChecked = false;
+													      }     
+													   }
+                                                 mc.setProperty("isChecked",isChecked);]]></script>
+                    <log>
+                        <property expression="get-property('isChecked')" name="isChecked"/>
+                    </log>
+                    <filter regex="false" source="boolean(get-property('isChecked'))">
+                        <then>
+                            <payloadFactory media-type="json">
+                                <format>
+									{
+									"codeRetour": "600"
+									}
+								</format>
+                                <args/>
+                            </payloadFactory>
+                        </then>
+                        <else>
+                            <payloadFactory media-type="json">
+                                <format>
+									{
+									"consommation": {
+									"codeRetour": "$1",
+									"cnie": "$2",
+									"nomPrenom":
+									"$3",
+									"prefecture": "$4",
+									"commune": "$5",
+									"quartier":"$6",
+									"sousQuartier": "$7",
+									"immeuble": "$8",
+									"complementAdresse": "$9"
+									}
+									}
+								</format>
+                                <args>
+                                    <arg evaluator="json" expression="$.consommation.codeRetour"/>
+                                    <arg evaluator="json" expression="$.consommation.cnie"/>
+                                    <arg evaluator="json" expression="$.consommation.nomPrenom"/>
+                                    <arg evaluator="json" expression="$.consommation.prefecture"/>
+                                    <arg evaluator="json" expression="$.consommation.commune"/>
+                                    <arg evaluator="json" expression="$.consommation.quartier"/>
+                                    <arg evaluator="json" expression="$.consommation.sousquartier"/>
+                                    <arg evaluator="json" expression="$.consommation.immeuble"/>
+                                    <arg evaluator="json" expression="$.consommation.complementAdresse"/>
+                                </args>
+                            </payloadFactory>
+                        </else>
+                    </filter>
                 </then>
                 <else>
                     <payloadFactory media-type="json">

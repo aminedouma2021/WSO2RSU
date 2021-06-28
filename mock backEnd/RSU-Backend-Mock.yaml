@@ -49,19 +49,22 @@ paths:
                     Immeuble: 4
                     ComplementAdresse: string
                     ListeConsommations:
-                      Mois: 0
-                      Annee: 0
-                      MontantEau: 0
-                      MontantElectricite: 0
+                      - Mois: 0
+                        Annee: 2020
+                        MontantEau: 0
+                        MontantElectricite: 0
+                      - Mois: 0
+                        Annee: 2019
+                        MontantEau: 0
+                        MontantElectricite: 0
                     ListeConsommationAutresResidences:
-                      CIL: 0
-                      Adresse: string
-                      Commune: 0
-                      Mois: 0
-                      Annee: 0
-                      MontantEau: 0
-                      MontantElectricite: 0
-
+                      - CIL: 0
+                        Adresse: string
+                        Commune: 0
+                        Mois: 0
+                        Annee: 0
+                        MontantEau: 0
+                        MontantElectricite: 0
         '103':
           description: Premiers indices.
           content:
