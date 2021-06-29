@@ -37,7 +37,16 @@
                         </args>
                     </payloadFactory>
                     <filter regex="^null$" source="json-eval($.consommation)">
-                        <then/>
+                        <then>
+                            <payloadFactory media-type="json">
+                                <format>
+									{
+									"codeRetour": "unknown"
+									}
+								</format>
+                                <args/>
+                            </payloadFactory>
+                        </then>
                         <else>
                             <foreach expression="//consommation">
                                 <sequence>
@@ -53,9 +62,9 @@
                                                 <sousQuartier>$7</sousQuartier>
                                                 <immeuble>$8</immeuble>
                                                 <complementAdresse>$9</complementAdresse>
-                                                $10
-                                               $11
-                                            </consommation>
+												$10
+												$11
+											</consommation>
                                         </format>
                                         <args>
                                             <arg evaluator="json" expression="$.consommation.CodeRetour"/>
