@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <sequence name="IN_SEQ_MESSAGE_MEDIATION_PROCESS_API_RSU_CONSOMMATION_SERVICES" trace="disable" xmlns="http://ws.apache.org/ns/synapse">
-    <property expression="get-property('registry','conf:/resources/v1/properties/RSU_PROPERTIES_FILE.xml')" name="xmlFile" scope="default" type="OM"/>
+    <property expression="get-property('registry','conf:/resources/v1/properties/RSU_CONSOMMATION_PROPERTIES_FILE.xml')" name="xmlFile" scope="default" type="OM"/>
     <property expression="$ctx:xmlFile//ApiKeyConsommationServices" name="regPropertyApiKey" scope="default" type="STRING"/>
     <header expression="$ctx:regPropertyApiKey" name="apikey" scope="transport"/>
     <property expression="$url:codeAller" name="uri.var.codeAller" scope="default" type="STRING"/>

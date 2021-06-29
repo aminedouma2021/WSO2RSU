@@ -366,7 +366,7 @@
     <property name="log-activity" scope="default" type="STRING" value="SYSTEM API OUTPUT MEDIATION SEQUENCE"/>
     <property expression="fn:concat('Content-Length: ',$trp:Content-Length,', Content-Type: ',$trp:Content-Type,', Server: ',$trp:Server,', Date: ',$trp:Date,', User-Agent: ',$trp:User-Agent)" name="log-headers" scope="default" type="STRING"/>
     <property expression="fn:concat('RESPONSE RECEIVED: ',$ctx:propMsgResponse)" name="log-msg" scope="default" type="STRING"/>
-    <!-- <sequence key="conf:resources/v1/mediation/in/IN_SEQ_MESSAGE_MEDIATION_ONESITE_LOGS.xml"/> -->
+    <sequence key="conf:resources/v1/mediation/in/IN_SEQ_MESSAGE_MEDIATION_ONESITE_LOGS.xml"/>
     <!-- /Logs -->
     <!-- Metrics -->
     <property expression="$axis2:HTTP_SC" name="propHTTP_SC_API" scope="default" type="STRING"/>
@@ -382,7 +382,7 @@
     <property expression="$trp:User-Agent" name="User-Agent-Out-Backend" scope="default" type="STRING"/>
     <property name="Content-Type-Out-API" scope="default" type="STRING" value="application/xml; charset=UTF-8"/>
     <property expression="get-property(&quot;SYSTEM_DATE&quot;, &quot;E, d MMM yyyy HH:mm:ss Z&quot;)" name="Date-Out-API" scope="default" type="STRING"/>
-    <!-- <sequence key="conf:resources/v1/mediation/in/IN_SEQ_MESSAGE_MEDIATION_ONESITE_METRICS.xml"/> -->
+    <sequence key="conf:resources/v1/mediation/in/IN_SEQ_MESSAGE_MEDIATION_ONESITE_METRICS.xml"/>
     <!-- /Metrics -->
     <respond/>
 </sequence>

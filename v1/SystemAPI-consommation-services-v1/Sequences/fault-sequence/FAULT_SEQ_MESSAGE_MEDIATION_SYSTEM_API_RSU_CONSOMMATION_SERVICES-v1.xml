@@ -35,14 +35,14 @@
     <payloadFactory media-type="json">
         <format>
 			$1
-								</format>
+		</format>
         <args>
             <arg evaluator="xml" expression="$body/*[1]"/>
         </args>
     </payloadFactory>
     <property name="messageType" scope="axis2" type="STRING" value="application/json"/>
     <property expression="$axis2:HTTP_SC" name="HTTP_SC_Origin" scope="default" type="STRING"/>
-    <!--  Logs -->
+    <!-- Logs -->
     <property expression="$ctx:propX-Request-ID" name="log-id_instance" scope="default" type="STRING"/>
     <property name="log-process_name" scope="default" type="STRING" value="FAULT_SEQ_MESSAGE_MEDIATION_SYSTEM_API_RSU_CONSOMMATION_SERVICES"/>
     <property expression="get-property(&quot;SYSTEM_DATE&quot;, &quot;yyyy-MM-dd'T'HH:mm:ss.SSSXXX&quot;)" name="log-ts" scope="default" type="STRING"/>
@@ -53,8 +53,8 @@
     <property name="log-activity" scope="default" type="STRING" value="SYSTEM API FAULT MEDIATION SEQUENCE"/>
     <property expression="fn:concat('Content-Length: ',$trp:Content-Length,', Content-Type: ',$trp:Content-Type,', Server: ',$trp:Server,', Date: ',$trp:Date,', User-Agent: ',$trp:User-Agent)" name="log-headers" scope="default" type="STRING"/>
     <property expression="fn:concat('RESPONSE RECEIVED: ',$ctx:ERROR_MESSAGE)" name="log-msg" scope="default" type="STRING"/>
-    <!--     <sequence key="conf:resources/v1/mediation/in/IN_SEQ_MESSAGE_MEDIATION_ONESITE_LOGS.xml"/> -->
-    <!--  /Logs -->
+    <sequence key="conf:resources/v1/mediation/in/IN_SEQ_MESSAGE_MEDIATION_ONESITE_LOGS.xml"/>
+    <!-- /Logs -->
     <!-- Metrics -->
     <property expression="$ctx:ERROR_MESSAGE" name="propMsgResponse" scope="default" type="STRING"/>
     <property expression="$ctx:HTTP_SC_Origin" name="propHTTP_SC_API" scope="default" type="STRING"/>
@@ -80,7 +80,7 @@
     <property expression="$trp:Server" name="Server-Out-Backend" scope="default" type="STRING"/>
     <property expression="$trp:Date" name="Date-Out-Backend" scope="default" type="STRING"/>
     <property expression="$trp:User-Agent" name="User-Agent-Out-Backend" scope="default" type="STRING"/>
-    <!--     <sequence key="conf:resources/v1/mediation/in/IN_SEQ_MESSAGE_MEDIATION_ONESITE_METRICS.xml"/> -->
+    <sequence key="conf:resources/v1/mediation/in/IN_SEQ_MESSAGE_MEDIATION_ONESITE_METRICS.xml"/>
     <!-- /Metrics -->
     <property expression="$ctx:HTTP_SC_Origin" name="HTTP_SC" scope="axis2" type="STRING"/>
     <property action="remove" name="TRANSPORT_HEADERS" scope="axis2"/>

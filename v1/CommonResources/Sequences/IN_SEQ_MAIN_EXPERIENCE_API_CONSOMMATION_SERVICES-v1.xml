@@ -78,7 +78,7 @@
                         </case>
                         <default>
                             <property action="remove" name="TRANSPORT_HEADERS" scope="axis2"/>
-                            <property expression="get-property('registry','conf:/resources/v1/properties/RSU_PROPERTIES_FILE.xml')" name="xmlFile" scope="default" type="OM"/>
+                            <property expression="get-property('registry','conf:/resources/v1/properties/RSU_CONSOMMATION_PROPERTIES_FILE.xml')" name="xmlFile" scope="default" type="OM"/>
                             <property expression="$ctx:xmlFile//ApiKeyConsommationServices" name="regPropertyApiKey" scope="default" type="STRING"/>
                             <header expression="$ctx:regPropertyApiKey" name="apikey" scope="transport"/>
                             <header expression="$ctx:header_X-Client-ID" name="X-Client-ID" scope="transport"/>
@@ -109,7 +109,7 @@
                             <property name="log-activity" scope="default" type="STRING" value="EXPERIENCE API INPUT MEDIATION SEQUENCE"/>
                             <property expression="fn:concat('Content-Length: ',$ctx:Content-Length,', Content-Type: ',$ctx:Content-Type,', Server: ',$ctx:Server,', Date: ',$ctx:Date,', User-Agent: ',$ctx:User-Agent)" name="log-headers" scope="default" type="STRING"/>
                             <property name="log-msg" scope="default" type="STRING" value="REQUEST RECEIVED: OK"/>
-                            <!--<sequence key="conf:resources/v1/mediation/in/IN_SEQ_MESSAGE_MEDIATION_ONESITE_LOGS.xml"/>-->
+                            <sequence key="conf:resources/v1/mediation/in/IN_SEQ_MESSAGE_MEDIATION_ONESITE_LOGS.xml"/>
                             <!-- /Logs -->
                         </default>
                     </switch>

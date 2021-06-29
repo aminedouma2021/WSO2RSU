@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <sequence name="IN_SEQ_MESSAGE_MEDIATION_SYSTEM_API_RSU_CONSOMMATION_SERVICES" trace="disable" xmlns="http://ws.apache.org/ns/synapse">
-    <property expression="get-property('registry','conf:/resources/v1/properties/RSU_PROPERTIES_FILE.xml')" name="xmlFile" scope="default" type="OM"/>
+    <property expression="get-property('registry','conf:/resources/v1/properties/RSU_CONSOMMATION_PROPERTIES_FILE.xml')" name="xmlFile" scope="default" type="OM"/>
     <property expression="$ctx:xmlFile//ClientIdConsommationServices" name="regPropertyLogin" scope="default" type="STRING"/>
     <property expression="$ctx:xmlFile//ClientSecretConsommationServices" name="regPropertyPassword" scope="default" type="STRING"/>
     <log>
@@ -58,6 +58,6 @@
     <property name="log-activity" scope="default" type="STRING" value="SYSTEM API INPUT MEDIATION SEQUENCE"/>
     <property expression="fn:concat('Content-Length: ',$ctx:Content-Length-In-Backend,', Content-Type: ',$ctx:Content-Type-In-Backend,', Server: ',$ctx:Server-In-Backend,', Date: ',$ctx:Date-In-Backend,', User-Agent: ',$ctx:User-Agent-In-Backend)" name="log-headers" scope="default" type="STRING"/>
     <property name="log-msg" scope="default" type="STRING" value="REQUEST RECEIVED: OK"/>
-    <!--     <sequence key="conf:resources/v1/mediation/in/IN_SEQ_MESSAGE_MEDIATION_ONESITE_LOGS.xml"/> -->
+    <sequence key="conf:resources/v1/mediation/in/IN_SEQ_MESSAGE_MEDIATION_ONESITE_LOGS.xml"/>
     <!--  /Logs -->
 </sequence>
