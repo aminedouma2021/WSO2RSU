@@ -12,7 +12,7 @@ servers:
   url: https://gatewayadd-dev.onesaitplatform.com/redal-consommation-services/v1
   description: DEV
  -
-  url: https://uat-host/redal-consommation-services/v1
+  url: https://gatewayadd-uat.onesaitplatform.com/redal-consommation-services/v1
   description: UAT
  -
   url: https://pro-host/redal-consommation-services/v1
@@ -285,7 +285,7 @@ components:
       schema:
         type: number
     x-client-id:
-      name: x-client-id
+      name: X-Client-ID
       in: header
       description: ID d'API de l'application source
       required: true
@@ -294,7 +294,7 @@ components:
       schema:
         type: string
     x-request-application-name:
-      name: x-request-application-name
+      name: X-Request-Application-Name
       in: header
       description: Description Nom de l'application source
       required: true
@@ -303,7 +303,7 @@ components:
       schema:
         type: string
     x-request-id:
-      name: x-request-id
+      name: X-Request-ID
       in: header
       description: ID de demande (ID de corrélation)
       required: true
@@ -334,7 +334,7 @@ components:
           scopes: {}
 x-wso2-auth-header: Authorization
 x-wso2-cors:
-  corsConfigurationEnabled: false
+  corsConfigurationEnabled: true
   accessControlAllowOrigins:
    - '*'
   accessControlAllowCredentials: false
@@ -345,6 +345,9 @@ x-wso2-cors:
    - SOAPAction
    - apikey
    - testKey
+   - X-Request-Application-Name
+   - X-Request-ID
+   - X-Client-ID
   accessControlAllowMethods:
    - GET
    - PUT
@@ -360,7 +363,7 @@ x-wso2-sandbox-endpoints:
   urls:
    - http://localhost:3000/redal-consommation-services/v1
   type: http
-x-wso2-basePath: /redal-consommation-services/1.0.0
+x-wso2-basePath: /redal-consommation-services/v1
 x-wso2-transports:
  - http
  - https

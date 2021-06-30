@@ -1,11 +1,11 @@
 id:
   providerName: admin
-  apiName: ProcessAPI-consommation-services
-  version: 1.0.0
+  apiName: ProcessAPI-consommation-services-v1
+  version: 1.0.6
   id: 0
 uuid: 35e09ae2-083a-4455-80f5-56c96b67d13b
 type: HTTP
-context: /redal-process-consommation-services/v1/1.0.0
+context: /redal-process-consommation-services/v1/1.0.6
 contextTemplate: /redal-process-consommation-services/v1/{version}
 tags:
  - RSU
@@ -27,7 +27,8 @@ uriTemplates: []
 apiHeaderChanged: false
 apiResourcePatternsChanged: false
 status: PUBLISHED
-visibility: public
+visibility: restricted
+visibleRoles: rsu_developer,admin
 gatewayLabels: []
 endpointSecured: false
 endpointAuthDigest: false
@@ -36,10 +37,10 @@ inSequence: IN_SEQ_MAIN_PROCESS_API_RSU_CONSOMMATION_SERVICES-v1
 advertiseOnly: false
 subscriptionAvailability: current_tenant
 corsConfiguration:
-  corsConfigurationEnabled: false
+  corsConfigurationEnabled: true
   accessControlAllowOrigins:
    - '*'
-  accessControlAllowCredentials: true
+  accessControlAllowCredentials: false
   accessControlAllowHeaders:
    - authorization
    - Access-Control-Allow-Origin
@@ -47,6 +48,9 @@ corsConfiguration:
    - SOAPAction
    - apikey
    - testKey
+   - X-Request-Application-Name
+   - X-Request-ID
+   - X-Client-ID
   accessControlAllowMethods:
    - GET
    - PUT
@@ -79,11 +83,12 @@ enableSchemaValidation: false
 apiCategories:
  -
   id: b6ec8257-1175-4c96-a90d-efbe6453a28f
-  name: ProcessAPI
-  description: Process APIs
+  name: RSU
+  description: RSU APIs
   numberOfAPIs: 0
   tenantID: -1234
 enableStore: true
-accessControl: all
+accessControl: restricted
+accessControlRoles: rsu_developer,admin
 rating: 0.0
 isLatest: true

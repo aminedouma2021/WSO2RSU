@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <endpoint name="SYSTEM_API_RSU_CONSOMMATION_SERVICES" xmlns="http://ws.apache.org/ns/synapse">
-    <http method="get" uri-template="http://localhost:8280/redal-consommation-services/v1/consommation?codeAller={uri.var.codeAller}&amp;idcs={uri.var.idcs}&amp;cnie={uri.var.cnie}&amp;cil={uri.var.cil}&amp;commune={uri.var.commune}&amp;dateDebut={uri.var.dateDebut}&amp;dateFin={uri.var.dateFin}">
+    <http method="get" uri-template="http://localhost:8280/redal-consommation-services/v1/1.0.6/consommation?codeAller={uri.var.codeAller}&amp;idcs={uri.var.idcs}&amp;cnie={uri.var.cnie}&amp;cil={uri.var.cil}&amp;commune={uri.var.commune}&amp;dateDebut={uri.var.dateDebut}&amp;dateFin={uri.var.dateFin}">
         <suspendOnFailure>
             <initialDuration>-1</initialDuration>
             <progressionFactor>1.0</progressionFactor>

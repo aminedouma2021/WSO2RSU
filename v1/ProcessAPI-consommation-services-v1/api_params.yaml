@@ -1,5 +1,13 @@
 environments:
+  - name: add-desa-env
+    endpoints:
+      production:
+      sandbox:
   - name: dev
+    endpoints:
+      production:
+      sandbox:
+  - name: add-uat-env
     endpoints:
       production:
       sandbox:

@@ -12,7 +12,7 @@ servers:
   url: https://gatewayadd-dev.onesaitplatform.com/consommation-services/v1
   description: DEV
  -
-  url: https://uat-host/consommation-services/v1
+  url: https://gatewayadd-uat.onesaitplatform.com/consommation-services/v1
   description: UAT
  -
   url: https://pro-host/consommation-services/v1
@@ -107,7 +107,10 @@ paths:
        -
         bearerAuth: []
        -
-        default: []
+        default:
+         - rsu_consommation_redal
+         - rsu_subscriber
+
       x-auth-type: Application & Application User
       x-throttling-tier: Unlimited
       x-wso2-application-security:
@@ -185,7 +188,10 @@ paths:
        -
         oAuthWSO2: []
        -
-        default: []
+        default:
+         - rsu_consommat_spec_redal
+         - rsu_subscriber
+
       x-auth-type: Application & Application User
       x-throttling-tier: Unlimited
       x-wso2-application-security:
@@ -479,13 +485,21 @@ components:
       flows:
         implicit:
           authorizationUrl: ""
-          scopes: {}
+          scopes:
+            rsu_consommation_redal: Subscribe to RSU's consommation operation
+            rsu_consommat_spec_redal: Subscribe to RSU's consommation specific operation
+            rsu_subscriber: Subscribe to all RSU API operations
+          x-scopes-bindings:
+            rsu_consommation_redal: rsu_consommation_redal_op
+            rsu_consommat_spec_redal: rsu_consommat_spec_redal_op
+            rsu_subscriber: rsu_subscriber,rsu_developer,admin
+
 x-wso2-auth-header: Authorization
 x-wso2-cors:
-  corsConfigurationEnabled: false
+  corsConfigurationEnabled: true
   accessControlAllowOrigins:
    - '*'
-  accessControlAllowCredentials: true
+  accessControlAllowCredentials: false
   accessControlAllowHeaders:
    - authorization
    - Access-Control-Allow-Origin
@@ -493,6 +507,9 @@ x-wso2-cors:
    - SOAPAction
    - apikey
    - testKey
+   - X-Request-Application-Name
+   - X-Request-ID
+   - X-Client-ID
   accessControlAllowMethods:
    - GET
    - PUT
@@ -504,7 +521,7 @@ x-wso2-production-endpoints:
   type: default
 x-wso2-sandbox-endpoints:
    type: default
-x-wso2-basePath: /consommation-services/1.0.0
+x-wso2-basePath: /consommation-services/v1
 x-wso2-transports:
  - http
  - https

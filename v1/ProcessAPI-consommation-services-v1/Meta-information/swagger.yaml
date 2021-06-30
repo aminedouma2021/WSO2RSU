@@ -12,7 +12,7 @@ servers:
   url: https://gatewayadd-dev.onesaitplatform.com/redal-process-consommation-services/v1
   description: DEV
  -
-  url: https://uat-host/redal-process-consommation-services/v1
+  url: https://gatewayadd-uat.onesaitplatform.com/redal-process-consommation-services/v1
   description: UAT
  -
   url: https://pro-host/redal-process-consommation-services/v1
@@ -162,7 +162,7 @@ components:
             complementAdresse: oulfa casablanca
   parameters:
     x-client-id:
-      name: x-client-id
+      name: X-Client-ID
       in: header
       description: ID d'API de l'application source
       required: true
@@ -171,7 +171,7 @@ components:
       schema:
         type: string
     x-request-id:
-      name: x-request-id
+      name: X-Request-ID
       in: header
       description: Description Nom de l'application source
       required: true
@@ -180,7 +180,7 @@ components:
       schema:
         type: string
     x-request-application-name:
-      name: x-request-application-name
+      name: X-Request-Application-Name
       in: header
       description: Description Nom de l'application source
       required: true
@@ -272,10 +272,10 @@ components:
           scopes: {}
 x-wso2-auth-header: Authorization
 x-wso2-cors:
-  corsConfigurationEnabled: false
+  corsConfigurationEnabled: true
   accessControlAllowOrigins:
    - '*'
-  accessControlAllowCredentials: true 
+  accessControlAllowCredentials: false
   accessControlAllowHeaders:
    - authorization
    - Access-Control-Allow-Origin
@@ -283,6 +283,9 @@ x-wso2-cors:
    - SOAPAction
    - apikey
    - testKey
+   - X-Request-Application-Name
+   - X-Request-ID
+   - X-Client-ID
   accessControlAllowMethods:
    - GET
    - PUT
@@ -298,7 +301,7 @@ x-wso2-sandbox-endpoints:
   urls:
    - http://localhost:3000/redal-process-consommation-services/v1
   type: http
-x-wso2-basePath: /redal-process-consommation-services/1.0.0
+x-wso2-basePath: /redal-process-consommation-services/v1
 x-wso2-transports:
  - http
  - https

@@ -1,11 +1,11 @@
 id:
   providerName: admin
   apiName: ExperienceAPI-consommation-services-v1
-  version: 1.0.1
+  version: 1.0.6
   id: 0
 uuid: 1aadc368-e630-4033-8c3a-2068d9f88450
 type: HTTP
-context: /consommation-services/v1/1.0.1
+context: /consommation-services/v1/1.0.6
 contextTemplate: /consommation-services/v1/{version}
 tags:
  - RSU
@@ -27,20 +27,21 @@ uriTemplates: []
 apiHeaderChanged: false
 apiResourcePatternsChanged: false
 status: PUBLISHED
-visibility: public
+visibility: restricted
+visibleRoles: rsu_developer,admin,rsu_view
 gatewayLabels: []
 endpointSecured: false
 endpointAuthDigest: false
 transports: http,https
-inSequence: IN_SEQ_MAIN_EXPERIENCE_API_CONSOMMATION_SERVICES-v1
+inSequence: IN_SEQ_MAIN_EXPERIENCE_API_RSU_CONSOMMATION_SERVICES-v1
 faultSequence: FAULT_SEQ_MESSAGE_MEDIATION_EXPERIENCE_API_RSU_CONSOMMATION_SERVICES-v1
 advertiseOnly: false
 subscriptionAvailability: current_tenant
 corsConfiguration:
-  corsConfigurationEnabled: false
+  corsConfigurationEnabled: true
   accessControlAllowOrigins:
    - '*'
-  accessControlAllowCredentials: true
+  accessControlAllowCredentials: false
   accessControlAllowHeaders:
    - authorization
    - Access-Control-Allow-Origin
@@ -48,6 +49,9 @@ corsConfiguration:
    - SOAPAction
    - apikey
    - testKey
+   - X-Request-Application-Name
+   - X-Request-ID
+   - X-Client-ID
   accessControlAllowMethods:
    - GET
    - PUT
@@ -80,11 +84,12 @@ enableSchemaValidation: false
 apiCategories:
 -
   id: 18131f70-b9a3-479a-8add-c461b7e5ee8a
-  name: ExperienceAPI
-  description: Experience APIs
+  name: RSU
+  description: RSU APIs
   numberOfAPIs: 0
   tenantID: -1234
 enableStore: true
-accessControl: all
+accessControl: restricted
+accessControlRoles: rsu_developer,admin,rsu_view
 rating: 0.0
 isLatest: true
